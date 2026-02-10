@@ -1,0 +1,185 @@
+<!-- HEADER TOP -->
+<div class="header-top">
+  <div class="header-top-content">
+    <div class="header-links">
+      <a href="#" class="top-link">Jordan</a>
+      <a href="#" class="top-link">Converse</a>
+    </div>
+    <div class="header-links">
+      <a href="#" class="top-link">Encuentra una tienda</a>
+      <a href="#" class="top-link">Ayuda</a>
+      <a href="#" class="top-link">Únete</a>
+      <a href="#" class="top-link">Inicia sesión</a>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="main-nav">
+  <div class="nav-content">
+    <a href="/" (click)="clearSearch(); $event.preventDefault()">
+      <img
+        src="assets/logo-chaac-xanab.png"
+        alt="CHAAC XANAB Logo"
+        class="brand-logo"
+      />
+    </a>
+
+    <ul class="nav-menu">
+      <li><a href="#nuevo" class="nav-link">Nuevo</a></li>
+      <li><a href="#hombre" class="nav-link">Hombre</a></li>
+      <li><a href="#mujer" class="nav-link">Mujer</a></li>
+      <li><a href="#ninos" class="nav-link">Niños</a></li>
+      <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
+      <li><a href="#snkrs" class="nav-link">SNKRS</a></li>
+    </ul>
+
+    <div class="search-box">
+      <span>🔍</span>
+      <input 
+        type="text" 
+        placeholder="Buscar productos..." 
+        class="search-input" 
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      />
+      <button 
+        *ngIf="searchTerm" 
+        class="clear-search" 
+        (click)="clearSearch()"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO SECTION - Solo se muestra cuando NO hay búsqueda -->
+<section class="hero-section" *ngIf="!isSearching">
+  <div class="hero-content">
+    <div>
+      <p class="hero-label">RUNNING</p>
+      <h1 class="hero-title">AIR MAX PULSE</h1>
+      <p class="hero-description">
+        Velocidad suprema. Comodidad increíble. Diseño revolucionario. La nueva era del calzado
+        deportivo ha llegado.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary">Comprar</button>
+        <button class="btn-secondary">Conoce más</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img 
+        src="assets/zapato-hero.png" 
+        alt="Air Max Pulse" 
+        class="shoe-image-real"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="search-results-section" *ngIf="isSearching">
+  <div class="container">
+    <div class="search-header">
+      <h2 class="search-title">Resultados para "{{ searchTerm }}"</h2>
+      <p class="search-count">{{ getSearchResultsCount() }} categorías encontradas</p>
+    </div>
+
+    <div class="no-results" *ngIf="getSearchResultsCount() === 0">
+      <div class="no-results-icon">😕</div>
+      <h3>No encontramos el producto con el nombre "{{ searchTerm }}"</h3>
+      <p>Intenta con: Running, Básquetbol, Lifestyle</p>
+      <button class="btn-primary" (click)="clearSearch()">Ver todas las categorías</button>
+    </div>
+
+    <div class="categories-grid" *ngIf="getSearchResultsCount() > 0">
+      <div 
+        *ngFor="let category of filteredCategories" 
+        class="category-card"
+      >
+        <img 
+          [src]="category.image" 
+          [alt]="category.title" 
+          class="category-image-real"
+        />
+        <h3 class="category-title">{{ category.title }}</h3>
+        <p class="category-subtitle">{{ category.subtitle }}</p>
+        <a href="#" class="category-link">Comprar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORÍAS DESTACADAS - Solo se muestra cuando NO hay búsqueda -->
+<section class="categories-section" *ngIf="!isSearching">
+  <div class="container">
+    <h2 class="section-title">DESTACADOS</h2>
+
+    <div class="categories-grid">
+      <div 
+        *ngFor="let category of categories" 
+        class="category-card"
+      >
+        <img 
+          [src]="category.image" 
+          [alt]="category.title" 
+          class="category-image-real"
+        />
+        <h3 class="category-title">{{ category.title }}</h3>
+        <p class="category-subtitle">{{ category.subtitle }}</p>
+        <a href="#" class="category-link">Comprar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- FOOTER -->
+<footer class="main-footer">
+  <div class="footer-main">
+    <div>
+      <h4 class="footer-title">Conoce más de nosotros</h4>
+      <ul class="footer-links">
+        <li><a href="#">Acerca de CHAAC XANAB</a></li>
+        <li><a href="#">Noticias</a></li>
+        <li><a href="#">Carreras</a></li>
+        <li><a href="#">Inversionistas</a></li>
+        <li><a href="#">Sustentabilidad</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="footer-title">Obtén ayuda</h4>
+      <ul class="footer-links">
+        <li><a href="#">Estado del pedido</a></li>
+        <li><a href="#">Envíos y entregas</a></li>
+        <li><a href="#">Devoluciones</a></li>
+        <li><a href="#">Opciones de pago</a></li>
+        <li><a href="#">Contáctanos</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="footer-title">Recursos y tiendas</h4>
+      <ul class="footer-links">
+        <li><a href="https://www.footlocker.com" target="_blank">Foot Locker ↗</a></li>
+        <li><a href="https://www.stockx.com" target="_blank">StockX ↗</a></li>
+        <li><a href="https://sneakernews.com" target="_blank">Sneaker News ↗</a></li>
+        <li><a href="https://www.highsnobiety.com" target="_blank">Highsnobiety ↗</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="footer-title">Síguenos</h4>
+      <p class="social-text">
+        Twitter<br />
+        Instagram<br />
+        Facebook<br />
+        YouTube
+      </p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>📍 México — © 2026 CHAAC XANAB</p>
+  </div>
+</footer>
