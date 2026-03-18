@@ -1,0 +1,64 @@
+<!-- HEADER -->
+<div class="page-header">
+  <p class="header-brand">CHAAC XANAB</p>
+  <div class="check-circle">
+    <span class="check-icon">✓</span>
+  </div>
+  <h1>¡PEDIDO CONFIRMADO!</h1>
+  <p>Gracias por tu compra, {{ userName }}</p>
+</div>
+
+<!-- CONTENIDO -->
+<div class="page-content">
+  <div class="confirmation-card">
+
+    <div class="order-number">
+      <span class="order-label">Número de pedido</span>
+      <span class="order-value">{{ orderNumber }}</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-icon">📅</span>
+        <div>
+          <p class="info-label">Fecha del pedido</p>
+          <p class="info-value">{{ orderDate }}</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-icon">🚚</span>
+        <div>
+          <p class="info-label">Tiempo de entrega</p>
+          <p class="info-value">3 a 5 días hábiles</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-icon">📧</span>
+        <div>
+          <p class="info-label">Confirmación</p>
+          <p class="info-value">Enviada a tu correo</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-icon">🛡️</span>
+        <div>
+          <p class="info-label">Garantía</p>
+          <p class="info-value">90 días en todos los productos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p>Tu pedido está siendo procesado. Te notificaremos cuando sea enviado.</p>
+    </div>
+
+    <div class="actions">
+      <a routerLink="/" class="btn-primary">Volver al inicio</a>
+      <a routerLink="/terminos" class="btn-secondary">Ver garantías</a>
+    </div>
+
+  </div>
+</div>

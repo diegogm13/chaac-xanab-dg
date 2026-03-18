@@ -1,0 +1,342 @@
+/* ===== VARIABLES ===== */
+:host {
+    --color-black: #000000;
+    --color-teal: #005147;
+    --color-coral: #ea553b;
+    --color-white: #ffffff;
+    --color-gray-100: #f5f5f5;
+    --color-gray-300: #cccccc;
+    --color-gray-400: #757575;
+    --color-gray-600: #3d3d3d;
+    display: block;
+}
+
+/* ===== HEADER INTERNO ===== */
+.terminos-header {
+    background: linear-gradient(135deg, var(--color-black) 0%, var(--color-gray-600) 100%);
+    color: var(--color-white);
+    padding: 60px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.terminos-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    animation: pulse-bg 6s ease-in-out infinite;
+}
+
+@keyframes pulse-bg {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.terminos-header h1 {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.terminos-header p {
+    font-size: 16px;
+    color: var(--color-gray-300);
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb {
+    padding: 16px 48px;
+    background: var(--color-gray-100);
+    border-bottom: 1px solid var(--color-gray-300);
+    font-size: 14px;
+    color: var(--color-gray-400);
+}
+
+.breadcrumb a {
+    color: var(--color-black);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.breadcrumb a:hover {
+    opacity: 0.7;
+}
+
+.breadcrumb span {
+    margin: 0 8px;
+    color: var(--color-gray-300);
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+.terminos-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 48px 80px;
+}
+
+/* ===== TABLA DE CONTENIDO ===== */
+.table-of-contents {
+    background: var(--color-gray-100);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 48px;
+    border-left: 4px solid var(--color-black);
+}
+
+.table-of-contents h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--color-black);
+}
+
+.table-of-contents ol {
+    padding-left: 20px;
+}
+
+.table-of-contents li {
+    margin-bottom: 10px;
+}
+
+.table-of-contents a {
+    color: var(--color-gray-600);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.table-of-contents a:hover {
+    color: var(--color-black);
+}
+
+/* ===== SECCIONES ===== */
+.section {
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--color-gray-300);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--color-black);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-icon {
+    font-size: 28px;
+}
+
+.section h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    color: var(--color-gray-600);
+}
+
+.section p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--color-gray-600);
+    margin-bottom: 16px;
+}
+
+.section ul {
+    padding-left: 24px;
+    margin-bottom: 16px;
+}
+
+.section li {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--color-gray-600);
+    margin-bottom: 8px;
+}
+
+.section li strong {
+    color: var(--color-black);
+}
+
+/* ===== TABLA DE TALLAS ===== */
+.size-table-wrapper {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.size-table thead {
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.size-table th {
+    padding: 14px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.size-table td {
+    padding: 12px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--color-gray-300);
+    color: var(--color-gray-600);
+}
+
+.size-table tbody tr {
+    transition: background 0.2s;
+}
+
+.size-table tbody tr:hover {
+    background: var(--color-gray-100);
+}
+
+.size-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== HIGHLIGHT BOX ===== */
+.highlight-box {
+    background: var(--color-gray-100);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-left: 4px solid var(--color-teal);
+}
+
+.highlight-box p {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--color-teal);
+}
+
+/* ===== WARNING BOX ===== */
+.warning-box {
+    background: #fff5f5;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    border-left: 4px solid var(--color-coral);
+}
+
+.warning-box p {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--color-coral);
+}
+
+/* ===== BOTÓN VOLVER ===== */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    padding: 14px 32px;
+    background: var(--color-black);
+    color: var(--color-white);
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.back-link:hover {
+    background: var(--color-gray-600);
+    transform: scale(1.05);
+}
+
+/* ===== FOOTER INTERNO ===== */
+.terminos-footer {
+    background: var(--color-black);
+    color: var(--color-gray-400);
+    text-align: center;
+    padding: 24px 48px;
+    font-size: 12px;
+    border-top: 1px solid var(--color-gray-600);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .terminos-header {
+        padding: 40px 24px;
+    }
+
+    .terminos-header h1 {
+        font-size: 32px;
+    }
+
+    .breadcrumb {
+        padding: 12px 24px;
+    }
+
+    .terminos-content {
+        padding: 40px 24px 60px;
+    }
+
+    .table-of-contents {
+        padding: 24px;
+    }
+
+    .section h2 {
+        font-size: 22px;
+    }
+
+    .section h3 {
+        font-size: 18px;
+    }
+
+    .size-table th,
+    .size-table td {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}

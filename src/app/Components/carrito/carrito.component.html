@@ -1,0 +1,80 @@
+<!-- HEADER -->
+<div class="page-header">
+  <p class="header-brand">CHAAC XANAB</p>
+  <h1>MI CARRITO</h1>
+  <p>{{ items.length }} {{ items.length === 1 ? 'producto' : 'productos' }}</p>
+</div>
+
+<!-- CARRITO VACÍO -->
+@if (items.length === 0) {
+  <div class="empty-cart">
+    <div class="empty-icon">🛒</div>
+    <h2>Tu carrito está vacío</h2>
+    <p>Agrega productos desde el inicio para comenzar tu compra.</p>
+    <a routerLink="/" class="btn-primary">Ver productos</a>
+  </div>
+}
+
+<!-- CARRITO CON ITEMS -->
+@if (items.length > 0) {
+  <div class="cart-layout">
+
+    <!-- LISTA DE ITEMS -->
+    <div class="cart-items">
+      @for (item of items; track item.product.name + item.size; let i = $index) {
+        <div class="cart-item">
+          <div class="item-image-wrap">
+            <img [src]="item.product.image" [alt]="item.product.name" class="item-image" />
+          </div>
+
+          <div class="item-details">
+            <p class="item-name">{{ item.product.name }}</p>
+            <p class="item-meta">Talla: <strong>{{ item.size }}</strong></p>
+            <p class="item-price">${{ item.product.price }}</p>
+          </div>
+
+          <div class="item-controls">
+            <div class="qty-control">
+              <button class="qty-btn" (click)="changeQty(i, -1)">−</button>
+              <span class="qty-value">{{ item.quantity }}</span>
+              <button class="qty-btn" (click)="changeQty(i, 1)">+</button>
+            </div>
+            <p class="item-subtotal">${{ getSubtotal(item) }}</p>
+            <button class="btn-remove" (click)="removeItem(i)" title="Eliminar">✕</button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- RESUMEN -->
+    <div class="cart-summary">
+      <h3 class="summary-title">RESUMEN</h3>
+
+      @for (item of items; track item.product.name + item.size) {
+        <div class="summary-row">
+          <span>{{ item.product.name }} (×{{ item.quantity }})</span>
+          <span>${{ getSubtotal(item) }}</span>
+        </div>
+      }
+
+      <div class="summary-divider"></div>
+
+      <div class="summary-total">
+        <span>Total</span>
+        <span>${{ total }}</span>
+      </div>
+
+      @if (isLoggedIn) {
+        <button class="btn-checkout" (click)="checkout()">Proceder al pago</button>
+      } @else {
+        <div class="login-required">
+          <p>Inicia sesión para completar tu compra.</p>
+          <a routerLink="/login" class="btn-checkout">Iniciar sesión</a>
+        </div>
+      }
+
+      <a routerLink="/" class="btn-continue">← Seguir comprando</a>
+    </div>
+
+  </div>
+}

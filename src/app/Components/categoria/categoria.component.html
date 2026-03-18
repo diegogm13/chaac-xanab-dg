@@ -1,0 +1,101 @@
+<!-- CATEGORÍA NO ENCONTRADA -->
+@if (!categoryData) {
+  <div class="not-found">
+    <div class="not-found-icon">🔍</div>
+    <h2>Sección no encontrada</h2>
+    <p>La categoría que buscas no existe.</p>
+    <a routerLink="/" class="btn-primary">Volver al inicio</a>
+  </div>
+}
+
+<!-- PÁGINA DE CATEGORÍA -->
+@if (categoryData) {
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <p class="header-brand">CHAAC XANAB</p>
+    <p class="header-label">{{ categoryData.subtitle }}</p>
+    <h1>{{ categoryData.title | uppercase }}</h1>
+    <p class="header-desc">{{ categoryData.description }}</p>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a routerLink="/">Inicio</a>
+    <span>/</span>
+    <span>{{ categoryData.title }}</span>
+  </div>
+
+  <!-- GRID DE PRODUCTOS -->
+  <section class="cat-section">
+    <div class="cat-container">
+
+      <div class="results-bar">
+        <p class="results-count">{{ categoryData.products.length }} productos</p>
+        @if (slug === 'snkrs') {
+          <div class="db-badge">Base de datos próximamente</div>
+        }
+      </div>
+
+      <div class="products-grid">
+        @for (product of categoryData.products; track product.name) {
+          <div class="product-card">
+
+            <!-- IMAGEN -->
+            <div class="product-image-container">
+              <img [src]="product.image" [alt]="product.name" class="product-image" />
+              @if (product.badge) {
+                <span class="product-badge"
+                  [class.new]="product.badge === 'new'"
+                  [class.sale]="product.badge === 'sale'"
+                  [class.popular]="product.badge === 'popular'">
+                  {{ product.badge === 'new' ? 'Nuevo' : product.badge === 'sale' ? 'Oferta' : 'Popular' }}
+                </span>
+              }
+              @if (product.originalPrice) {
+                <span class="discount-badge">-{{ getDiscount(product) }}%</span>
+              }
+            </div>
+
+            <!-- INFO -->
+            <div class="product-info">
+              <p class="product-name">{{ product.name }}</p>
+              <p class="product-description">{{ product.description }}</p>
+
+              <!-- PRECIO -->
+              <div class="price-row">
+                <span class="product-price">${{ product.price }}</span>
+                @if (product.originalPrice) {
+                  <span class="original-price">${{ product.originalPrice }}</span>
+                }
+              </div>
+
+              <!-- SELECTOR DE TALLA -->
+              <div class="size-selector">
+                <p class="size-label">Talla (MX):</p>
+                <div class="size-options">
+                  @for (s of product.sizes; track s) {
+                    <button class="size-btn"
+                      [class.selected]="selectedSizes[product.name] === s"
+                      (click)="selectedSizes[product.name] = s">{{ s }}</button>
+                  }
+                </div>
+              </div>
+
+              <!-- BOTÓN AGREGAR -->
+              <button class="btn-add-cart"
+                [class.added]="addedToCart[product.name + (selectedSizes[product.name] || '')]"
+                [disabled]="!selectedSizes[product.name]"
+                (click)="addToCart(product, selectedSizes[product.name])">
+                {{ addedToCart[product.name + (selectedSizes[product.name] || '')] ? '✓ Agregado' : 'Agregar al carrito' }}
+              </button>
+
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  </section>
+
+}

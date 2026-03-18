@@ -1,0 +1,81 @@
+<!-- HEADER -->
+<div class="page-header">
+  <a routerLink="/" class="header-logo-link">
+    <p class="header-brand">CHAAC XANAB</p>
+  </a>
+  <h1>CREAR CUENTA</h1>
+  <p>Únete a la comunidad CHAAC XANAB</p>
+</div>
+
+<!-- FORM CARD -->
+<div class="page-content">
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #regForm="ngForm">
+
+      <div class="field-group">
+        <label class="field-label">Nombre completo</label>
+        <input
+          type="text"
+          class="field-input"
+          placeholder="Tu nombre"
+          [(ngModel)]="name"
+          name="name"
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Correo electrónico</label>
+        <input
+          type="email"
+          class="field-input"
+          placeholder="tu@correo.com"
+          [(ngModel)]="email"
+          name="email"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Contraseña</label>
+        <input
+          type="password"
+          class="field-input"
+          placeholder="Mínimo 4 caracteres"
+          [(ngModel)]="password"
+          name="password"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Confirmar contraseña</label>
+        <input
+          type="password"
+          class="field-input"
+          [class.input-error]="confirmPassword && confirmPassword !== password"
+          placeholder="Repite tu contraseña"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          autocomplete="new-password"
+        />
+        @if (confirmPassword && confirmPassword !== password) {
+          <p class="field-hint error">Las contraseñas no coinciden</p>
+        }
+      </div>
+
+      @if (errorMsg) {
+        <div class="error-msg">{{ errorMsg }}</div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (!loading) { Crear cuenta } @else { Registrando... }
+      </button>
+
+    </form>
+
+    <div class="form-footer">
+      <p>¿Ya tienes cuenta? <a routerLink="/login" class="link-accent">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>

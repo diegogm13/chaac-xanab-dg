@@ -8,8 +8,13 @@
     <div class="header-links">
       <a href="#" class="top-link">Encuentra una tienda</a>
       <a href="#" class="top-link">Ayuda</a>
-      <a href="#" class="top-link">Únete</a>
-      <a href="#" class="top-link">Inicia sesión</a>
+      @if (!isLoggedIn) {
+        <a routerLink="/registro" class="top-link">Únete</a>
+        <a routerLink="/login" class="top-link">Inicia sesión</a>
+      } @else {
+        <span class="top-link top-link-user">Hola, {{ userName }}</span>
+        <a href="#" class="top-link" (click)="$event.preventDefault(); logout()">Cerrar sesión</a>
+      }
     </div>
   </div>
 </div>
@@ -17,129 +22,254 @@
 <!-- NAV -->
 <nav class="main-nav">
   <div class="nav-content">
-    <a href="/" (click)="clearSearch(); $event.preventDefault()">
-      <img
-        src="assets/logo-chaac-xanab.png"
-        alt="CHAAC XANAB Logo"
-        class="brand-logo"
-      />
+    <a routerLink="/" (click)="clearSearch()">
+      <img src="assets/logo-chaac-xanab.png" alt="CHAAC XANAB Logo" class="brand-logo" />
     </a>
 
     <ul class="nav-menu">
-      <li><a href="#nuevo" class="nav-link">Nuevo</a></li>
-      <li><a href="#hombre" class="nav-link">Hombre</a></li>
-      <li><a href="#mujer" class="nav-link">Mujer</a></li>
-      <li><a href="#ninos" class="nav-link">Niños</a></li>
-      <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
-      <li><a href="#snkrs" class="nav-link">SNKRS</a></li>
+      <li><a routerLink="/nuevo"   class="nav-link" routerLinkActive="nav-link-active">Nuevo</a></li>
+      <li><a routerLink="/hombre"  class="nav-link" routerLinkActive="nav-link-active">Hombre</a></li>
+      <li><a routerLink="/mujer"   class="nav-link" routerLinkActive="nav-link-active">Mujer</a></li>
+      <li><a routerLink="/ninos"   class="nav-link" routerLinkActive="nav-link-active">Niños</a></li>
+      <li><a routerLink="/ofertas" class="nav-link" routerLinkActive="nav-link-active">Ofertas</a></li>
+      <li><a routerLink="/snkrs"   class="nav-link" routerLinkActive="nav-link-active">SNKRS</a></li>
     </ul>
 
     <div class="search-box">
       <span>🔍</span>
-      <input 
-        type="text" 
-        placeholder="Buscar productos..." 
-        class="search-input" 
-        [(ngModel)]="searchTerm"
-        (input)="onSearch()"
-      />
-      <button 
-        *ngIf="searchTerm" 
-        class="clear-search" 
-        (click)="clearSearch()"
-      >
-        ✕
-      </button>
+      <input type="text" placeholder="Buscar productos..." class="search-input" [(ngModel)]="searchTerm"
+        (input)="onSearch()" />
+      @if (searchTerm) {
+        <button class="clear-search" (click)="clearSearch()">✕</button>
+      }
     </div>
+
+    <a routerLink="/carrito" class="cart-icon">
+      🛒
+      @if (cartCount > 0) {
+        <span class="cart-badge">{{ cartCount }}</span>
+      }
+    </a>
   </div>
 </nav>
 
-<!-- HERO SECTION - Solo se muestra cuando NO hay búsqueda -->
-<section class="hero-section" *ngIf="!isSearching">
-  <div class="hero-content">
-    <div>
-      <p class="hero-label">RUNNING</p>
-      <h1 class="hero-title">AIR MAX PULSE</h1>
-      <p class="hero-description">
-        Velocidad suprema. Comodidad increíble. Diseño revolucionario. La nueva era del calzado
-        deportivo ha llegado.
-      </p>
-      <div class="hero-actions">
-        <button class="btn-primary">Comprar</button>
-        <button class="btn-secondary">Conoce más</button>
+<!-- CONTENIDO HOME -->
+@if (isHome) {
+
+  <!-- HERO SECTION -->
+  @if (!isSearching) {
+    <section class="hero-section">
+      <div class="hero-content">
+        <div>
+          <p class="hero-label">RUNNING</p>
+          <h1 class="hero-title">AIR MAX PULSE</h1>
+          <p class="hero-description">
+            Velocidad suprema. Comodidad increíble. Diseño revolucionario. La nueva era del calzado
+            deportivo ha llegado.
+          </p>
+          <div class="hero-actions">
+            <a routerLink="/carrito" class="btn-primary">Comprar</a>
+            <button class="btn-secondary">Conoce más</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/zapato-hero.png" alt="Air Max Pulse" class="shoe-image-real" />
+        </div>
       </div>
-    </div>
-    <div class="hero-image">
-      <img 
-        src="assets/zapato-hero.png" 
-        alt="Air Max Pulse" 
-        class="shoe-image-real"
-      />
-    </div>
-  </div>
-</section>
+    </section>
+  }
 
-<section class="search-results-section" *ngIf="isSearching">
-  <div class="container">
-    <div class="search-header">
-      <h2 class="search-title">Resultados para "{{ searchTerm }}"</h2>
-      <p class="search-count">{{ getSearchResultsCount() }} categorías encontradas</p>
-    </div>
+  <!-- RESULTADOS DE BÚSQUEDA -->
+  @if (isSearching) {
+    <section class="search-results-section">
+      <div class="container">
+        <div class="search-header">
+          <h2 class="search-title">Resultados para "{{ searchTerm }}"</h2>
+          <p class="search-count">{{ getSearchResultsCount() }} categorías encontradas</p>
+        </div>
 
-    <div class="no-results" *ngIf="getSearchResultsCount() === 0">
-      <div class="no-results-icon">😕</div>
-      <h3>No encontramos el producto con el nombre "{{ searchTerm }}"</h3>
-      <p>Intenta con: Running, Básquetbol, Lifestyle</p>
-      <button class="btn-primary" (click)="clearSearch()">Ver todas las categorías</button>
-    </div>
+        @if (getSearchResultsCount() === 0) {
+          <div class="no-results">
+            <div class="no-results-icon">😕</div>
+            <h3>No encontramos el producto con el nombre "{{ searchTerm }}"</h3>
+            <p>Intenta con: Running, Básquetbol, Lifestyle</p>
+            <button class="btn-primary" (click)="clearSearch()">Ver todas las categorías</button>
+          </div>
+        }
 
-    <div class="categories-grid" *ngIf="getSearchResultsCount() > 0">
-      <div 
-        *ngFor="let category of filteredCategories" 
-        class="category-card"
-      >
-        <img 
-          [src]="category.image" 
-          [alt]="category.title" 
-          class="category-image-real"
-        />
-        <h3 class="category-title">{{ category.title }}</h3>
-        <p class="category-subtitle">{{ category.subtitle }}</p>
-        <a href="#" class="category-link">Comprar →</a>
+        @if (getSearchResultsCount() > 0) {
+          <div class="categories-grid">
+            @for (category of filteredCategories; track category.title) {
+              <div class="category-card">
+                <img [src]="category.image" [alt]="category.title" class="category-image-real" />
+                <h3 class="category-title">{{ category.title }}</h3>
+                <p class="category-subtitle">{{ category.subtitle }}</p>
+                <p class="category-price">${{ category.price }}</p>
+                <div class="size-selector">
+                  <p class="size-label">Talla (MX):</p>
+                  <div class="size-options">
+                    @for (s of category.sizes; track s) {
+                      <button class="size-btn"
+                        [class.selected]="selectedSizes['cat_' + category.title] === s"
+                        (click)="selectedSizes['cat_' + category.title] = s">{{ s }}</button>
+                    }
+                  </div>
+                </div>
+                <button class="btn-add-cart"
+                  [class.added]="addedToCart['cat_' + category.title + (selectedSizes['cat_' + category.title] || '')]"
+                  [disabled]="!selectedSizes['cat_' + category.title]"
+                  (click)="addCategoryToCart(category, selectedSizes['cat_' + category.title])">
+                  {{ addedToCart['cat_' + category.title + (selectedSizes['cat_' + category.title] || '')] ? '✓ Agregado' : 'Agregar al carrito' }}
+                </button>
+              </div>
+            }
+          </div>
+        }
       </div>
-    </div>
-  </div>
-</section>
+    </section>
+  }
 
-<!-- CATEGORÍAS DESTACADAS - Solo se muestra cuando NO hay búsqueda -->
-<section class="categories-section" *ngIf="!isSearching">
-  <div class="container">
-    <h2 class="section-title">DESTACADOS</h2>
-
-    <div class="categories-grid">
-      <div 
-        *ngFor="let category of categories" 
-        class="category-card"
-      >
-        <img 
-          [src]="category.image" 
-          [alt]="category.title" 
-          class="category-image-real"
-        />
-        <h3 class="category-title">{{ category.title }}</h3>
-        <p class="category-subtitle">{{ category.subtitle }}</p>
-        <a href="#" class="category-link">Comprar →</a>
+  <!-- CATEGORÍAS DESTACADAS -->
+  @if (!isSearching) {
+    <section class="categories-section">
+      <div class="container">
+        <h2 class="section-title">DESTACADOS</h2>
+        <div class="categories-grid">
+          @for (category of categories; track category.title) {
+            <div class="category-card">
+              <img [src]="category.image" [alt]="category.title" class="category-image-real" />
+              <h3 class="category-title">{{ category.title }}</h3>
+              <p class="category-subtitle">{{ category.subtitle }}</p>
+              <p class="category-price">${{ category.price }}</p>
+              <div class="size-selector">
+                <p class="size-label">Talla (MX):</p>
+                <div class="size-options">
+                  @for (s of category.sizes; track s) {
+                    <button class="size-btn"
+                      [class.selected]="selectedSizes['cat_' + category.title] === s"
+                      (click)="selectedSizes['cat_' + category.title] = s">{{ s }}</button>
+                  }
+                </div>
+              </div>
+              <button class="btn-add-cart"
+                [class.added]="addedToCart['cat_' + category.title + (selectedSizes['cat_' + category.title] || '')]"
+                [disabled]="!selectedSizes['cat_' + category.title]"
+                (click)="addCategoryToCart(category, selectedSizes['cat_' + category.title])">
+                {{ addedToCart['cat_' + category.title + (selectedSizes['cat_' + category.title] || '')] ? '✓ Agregado' : 'Agregar al carrito' }}
+              </button>
+            </div>
+          }
+        </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
+
+    <!-- PRODUCTOS DESTACADOS -->
+    <section class="products-section">
+      <div class="container">
+        <h2 class="section-title">PRODUCTOS DESTACADOS</h2>
+        <div class="products-grid">
+          @for (product of featuredProducts; track product.name) {
+            <div class="product-card">
+              <div class="product-image-container">
+                <img [src]="product.image" [alt]="product.name" class="product-image" />
+                @if (product.badge) {
+                  <span class="product-badge"
+                    [class.new]="product.badge === 'new'"
+                    [class.sale]="product.badge === 'sale'"
+                    [class.popular]="product.badge === 'popular'">
+                    {{ product.badge === 'new' ? 'Nuevo' : product.badge === 'sale' ? 'Oferta' : 'Popular' }}
+                  </span>
+                }
+              </div>
+              <div class="product-info">
+                <p class="product-name">{{ product.name }}</p>
+                <p class="product-description">{{ product.description }}</p>
+                <div class="size-selector">
+                  <p class="size-label">Talla (MX):</p>
+                  <div class="size-options">
+                    @for (s of product.sizes; track s) {
+                      <button class="size-btn"
+                        [class.selected]="selectedSizes[product.name] === s"
+                        (click)="selectedSizes[product.name] = s">{{ s }}</button>
+                    }
+                  </div>
+                </div>
+                <div class="product-footer">
+                  <span class="product-price">${{ product.price }}</span>
+                  <button class="btn-add-cart"
+                    [class.added]="addedToCart[product.name + (selectedSizes[product.name] || '')]"
+                    [disabled]="!selectedSizes[product.name]"
+                    (click)="addToCart(product, selectedSizes[product.name])">
+                    {{ addedToCart[product.name + (selectedSizes[product.name] || '')] ? '✓ Agregado' : 'Agregar' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- MÁS VENDIDOS -->
+    <section class="products-section bg-gray">
+      <div class="container">
+        <h2 class="section-title">MÁS VENDIDOS</h2>
+        <div class="products-grid">
+          @for (product of bestSellers; track product.name) {
+            <div class="product-card">
+              <div class="product-image-container">
+                <img [src]="product.image" [alt]="product.name" class="product-image" />
+                @if (product.badge) {
+                  <span class="product-badge"
+                    [class.new]="product.badge === 'new'"
+                    [class.sale]="product.badge === 'sale'"
+                    [class.popular]="product.badge === 'popular'">
+                    {{ product.badge === 'new' ? 'Nuevo' : product.badge === 'sale' ? 'Oferta' : 'Popular' }}
+                  </span>
+                }
+              </div>
+              <div class="product-info">
+                <p class="product-name">{{ product.name }}</p>
+                <p class="product-description">{{ product.description }}</p>
+                <div class="size-selector">
+                  <p class="size-label">Talla (MX):</p>
+                  <div class="size-options">
+                    @for (s of product.sizes; track s) {
+                      <button class="size-btn"
+                        [class.selected]="selectedSizes[product.name] === s"
+                        (click)="selectedSizes[product.name] = s">{{ s }}</button>
+                    }
+                  </div>
+                </div>
+                <div class="product-footer">
+                  <span class="product-price">${{ product.price }}</span>
+                  <button class="btn-add-cart"
+                    [class.added]="addedToCart[product.name + (selectedSizes[product.name] || '')]"
+                    [disabled]="!selectedSizes[product.name]"
+                    (click)="addToCart(product, selectedSizes[product.name])">
+                    {{ addedToCart[product.name + (selectedSizes[product.name] || '')] ? '✓ Agregado' : 'Agregar' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+}
+
+<!-- ROUTER OUTLET -->
+<router-outlet></router-outlet>
+
 <!-- FOOTER -->
 <footer class="main-footer">
   <div class="footer-main">
     <div>
       <h4 class="footer-title">Conoce más de nosotros</h4>
       <ul class="footer-links">
-        <li><a href="#">Acerca de CHAAC XANAB</a></li>
+        <li><a routerLink="/terminos">Terminos de uso</a></li>
         <li><a href="#">Noticias</a></li>
         <li><a href="#">Carreras</a></li>
         <li><a href="#">Inversionistas</a></li>

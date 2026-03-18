@@ -1,59 +1,92 @@
-# MiProyectoAngular
+# CHAAC XANAB - Tienda de Zapatos Deportivos
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.2.
+Plataforma de comercio electrónico desarrollada con Angular para la venta de zapatos deportivos de alta calidad. CHAAC XANAB ofrece una experiencia de compra intuitiva con diferentes categorías de productos deportivos adaptados a las necesidades de atletas y entusiastas del deporte.
 
-## Development server
+## Acerca del Proyecto
 
-To start a local development server, run:
+CHAAC XANAB es una tienda digital especializada en la venta de zapatos deportivos. La aplicación proporciona un catálogo organizado de productos, permitiendo a los usuarios explorar diferentes categorías, buscar productos específicos y acceder a información detallada de cada artículo.
+
+### Características Principales
+
+- Catálogo de productos organizados por categorías
+- Sistema de búsqueda de productos
+- Información detallada de cada producto incluyendo nombre, precio, imagen y descripción
+- Interfaz responsiva y moderna
+- Menú de enlaces externos para redes sociales y otros recursos
+
+## Vistas y Componentes
+
+### Vistas Principales
+
+1. **Vista Principal (Home)**
+   - Página de inicio que muestra las categorías de productos disponibles
+   - Opciones de búsqueda para encontrar productos específicos
+   - Catálogo de zapatos deportivos organizados por tipo
+
+2. **Vista de Categorías**
+   - Running: Zapatos diseñados para correr largas distancias con máximo confort y tecnología de amortiguación
+   - Básquetbol: Zapatos para jugar básquetbol con soporte y estabilidad en la cancha
+   - Lifestyle: Zapatos deportivos con estilo urbano para uso casual y diario
+
+### Componentes
+
+- **App Component**: Componente raíz que gestiona la lógica principal de la aplicación, incluyendo categorías de productos y funcionalidad de búsqueda
+- **External Links Menu**: Componente que muestra enlaces externos a redes sociales y otros recursos relacionados con la marca
+
+## Instrucciones de Desarrollo
+
+### Servidor de Desarrollo
+
+Para iniciar el servidor de desarrollo local, ejecuta:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Una vez que el servidor esté corriendo, abre tu navegador y navega a `http://localhost:4200/`. La aplicación se recargará automáticamente cuando modificques los archivos fuente.
 
-## Code scaffolding
+### Generación de Componentes
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para generar un nuevo componente, ejecuta:
 
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Para ver una lista completa de esquemas disponibles, ejecuta:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+## Compilación
 
-To build the project run:
+Para compilar el proyecto, ejecuta:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Esto compilará el proyecto y almacenará los artefactos de compilación en el directorio `dist/`. Por defecto, la compilación de producción optimiza la aplicación para rendimiento y velocidad.
 
-## Running unit tests
+## Pruebas Unitarias
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Para ejecutar pruebas unitarias con [Vitest](https://vitest.dev/), utiliza el siguiente comando:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Pruebas End-to-End
 
-For end-to-end (e2e) testing, run:
+Para pruebas end-to-end, ejecuta:
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Angular CLI no incluye un framework de testing end-to-end por defecto. Puedes elegir uno que se adapte a tus necesidades.
 
-## Additional Resources
+## Recursos Adicionales
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Para más información sobre Angular CLI, incluyendo referencias de comandos detalladas, visita la página de [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).

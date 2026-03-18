@@ -1,0 +1,57 @@
+<!-- HEADER -->
+<div class="page-header">
+  <a routerLink="/" class="header-logo-link">
+    <p class="header-brand">CHAAC XANAB</p>
+  </a>
+  <h1>BIENVENIDO</h1>
+  <p>Inicia sesión para continuar</p>
+</div>
+
+<!-- FORM CARD -->
+<div class="page-content">
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+
+      <div class="field-group">
+        <label class="field-label">Correo electrónico</label>
+        <input
+          type="email"
+          class="field-input"
+          placeholder="tu@correo.com"
+          [(ngModel)]="email"
+          name="email"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Contraseña</label>
+        <input
+          type="password"
+          class="field-input"
+          placeholder="••••••••"
+          [(ngModel)]="password"
+          name="password"
+          autocomplete="current-password"
+        />
+      </div>
+
+      @if (errorMsg) {
+        <div class="error-msg">{{ errorMsg }}</div>
+      }
+
+      <div class="demo-hint">
+        <span>Demo: demo&#64;chaac.mx / 1234</span>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (!loading) { Iniciar sesión } @else { Verificando... }
+      </button>
+
+    </form>
+
+    <div class="form-footer">
+      <p>¿No tienes cuenta? <a routerLink="/registro" class="link-accent">Regístrate aquí</a></p>
+    </div>
+  </div>
+</div>
