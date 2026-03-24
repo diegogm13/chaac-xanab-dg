@@ -20,66 +20,59 @@ export class RegistroComponent implements OnInit {
   errorMsg        = '';
   loading         = false;
 
-  // ── Biometría (aparece DESPUÉS de crear la cuenta) ─────────────────────────
-  biometricSupported     = false;
-  biometricLoading       = false;
-  registrationDone       = false; // true tras registro exitoso → mostrar opción de huella
-  biometricRegistered    = false; // true tras activar la huella
-  biometricErrorMsg      = '';
+  biometricSupported  = false;
+  biometricLoading    = false;
+  registrationDone    = false;
+  biometricRegistered = false;
+  biometricErrorMsg   = '';
 
   constructor(
     private authService: AuthService,
     private webAuthn:    WebAuthnService,
-    private router:      Router,
+    private router:      Router
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.biometricSupported = await this.webAuthn.isSupported();
   }
 
-  // ── Registro tradicional ───────────────────────────────────────────────────
   onSubmit(): void {
     this.errorMsg = '';
-
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.errorMsg = 'Por favor completa todos los campos.';
       return;
     }
-    if (this.password.length < 4) {
-      this.errorMsg = 'La contraseña debe tener al menos 4 caracteres.';
+    if (this.password.length < 6) {
+      this.errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
       return;
     }
     if (this.password !== this.confirmPassword) {
       this.errorMsg = 'Las contraseñas no coinciden.';
       return;
     }
-
     this.loading = true;
-    setTimeout(() => {
-      const success = this.authService.register(this.name, this.email, this.password);
-      this.loading = false;
-      if (success) {
+    this.authService.register(this.name, this.email, this.password).subscribe({
+      next: () => {
+        this.loading = false;
         if (this.biometricSupported) {
-          // Cuenta creada: mostrar opción de activar huella antes de ir al inicio
           this.registrationDone = true;
         } else {
           this.router.navigate(['/']);
         }
-      } else {
-        this.errorMsg = 'Ya existe una cuenta con ese correo.';
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err?.error?.message ?? 'Ya existe una cuenta con ese correo.';
       }
-    }, 400);
+    });
   }
 
-  // ── Activar huella digital (opcional, después del registro) ────────────────
   async onRegisterBiometric(): Promise<void> {
     this.biometricErrorMsg = '';
     this.biometricLoading  = true;
     try {
-      // El TPM del dispositivo genera el par de llaves y solicita la huella
       await this.webAuthn.register(this.email, this.name);
       this.biometricRegistered = true;
-      // Ir al inicio tras 1.5 s para que el usuario vea el mensaje de éxito
       setTimeout(() => this.router.navigate(['/']), 1500);
     } catch (err: any) {
       if (err?.name === 'NotAllowedError') {
@@ -92,8 +85,5 @@ export class RegistroComponent implements OnInit {
     }
   }
 
-  // ── Saltar activación de huella ────────────────────────────────────────────
-  skipBiometric(): void {
-    this.router.navigate(['/']);
-  }
+  skipBiometric(): void { this.router.navigate(['/']); }
 }

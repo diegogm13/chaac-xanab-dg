@@ -1,29 +1,35 @@
+<!-- CARGANDO -->
+@if (isLoading) {
+  <div class="not-found">
+    <p>Cargando...</p>
+  </div>
+}
+
 <!-- CATEGORÍA NO ENCONTRADA -->
-@if (!categoryData) {
+@if (!isLoading && notFound) {
   <div class="not-found">
     <div class="not-found-icon">🔍</div>
-    <h2>Sección no encontrada</h2>
-    <p>La categoría que buscas no existe.</p>
+    <h2>Sin productos en esta categoría</h2>
+    <p>Pronto tendremos novedades aquí.</p>
     <a routerLink="/" class="btn-primary">Volver al inicio</a>
   </div>
 }
 
 <!-- PÁGINA DE CATEGORÍA -->
-@if (categoryData) {
+@if (!isLoading && !notFound) {
 
   <!-- HEADER -->
   <div class="page-header">
     <p class="header-brand">CHAAC XANAB</p>
-    <p class="header-label">{{ categoryData.subtitle }}</p>
-    <h1>{{ categoryData.title | uppercase }}</h1>
-    <p class="header-desc">{{ categoryData.description }}</p>
+    <p class="header-label">{{ slug | uppercase }}</p>
+    <h1>{{ slug | uppercase }}</h1>
   </div>
 
   <!-- BREADCRUMB -->
   <div class="breadcrumb">
     <a routerLink="/">Inicio</a>
     <span>/</span>
-    <span>{{ categoryData.title }}</span>
+    <span>{{ slug }}</span>
   </div>
 
   <!-- GRID DE PRODUCTOS -->
@@ -31,28 +37,22 @@
     <div class="cat-container">
 
       <div class="results-bar">
-        <p class="results-count">{{ categoryData.products.length }} productos</p>
-        @if (slug === 'snkrs') {
-          <div class="db-badge">Base de datos próximamente</div>
-        }
+        <p class="results-count">{{ products.length }} productos</p>
       </div>
 
       <div class="products-grid">
-        @for (product of categoryData.products; track product.name) {
+        @for (product of products; track product.id) {
           <div class="product-card">
 
             <!-- IMAGEN -->
             <div class="product-image-container">
-              <img [src]="product.image" [alt]="product.name" class="product-image" />
+              <img [src]="product.image_url" [alt]="product.name" class="product-image" />
               @if (product.badge) {
-                <span class="product-badge"
-                  [class.new]="product.badge === 'new'"
-                  [class.sale]="product.badge === 'sale'"
-                  [class.popular]="product.badge === 'popular'">
-                  {{ product.badge === 'new' ? 'Nuevo' : product.badge === 'sale' ? 'Oferta' : 'Popular' }}
+                <span class="product-badge" [class]="product.badge">
+                  {{ badgeLabel(product.badge) }}
                 </span>
               }
-              @if (product.originalPrice) {
+              @if (product.original_price) {
                 <span class="discount-badge">-{{ getDiscount(product) }}%</span>
               }
             </div>
@@ -65,8 +65,8 @@
               <!-- PRECIO -->
               <div class="price-row">
                 <span class="product-price">${{ product.price }}</span>
-                @if (product.originalPrice) {
-                  <span class="original-price">${{ product.originalPrice }}</span>
+                @if (product.original_price) {
+                  <span class="original-price">${{ product.original_price }}</span>
                 }
               </div>
 
@@ -76,18 +76,18 @@
                 <div class="size-options">
                   @for (s of product.sizes; track s) {
                     <button class="size-btn"
-                      [class.selected]="selectedSizes[product.name] === s"
-                      (click)="selectedSizes[product.name] = s">{{ s }}</button>
+                      [class.selected]="selectedSizes[product.id] === s"
+                      (click)="selectedSizes[product.id] = s">{{ s }}</button>
                   }
                 </div>
               </div>
 
               <!-- BOTÓN AGREGAR -->
               <button class="btn-add-cart"
-                [class.added]="addedToCart[product.name + (selectedSizes[product.name] || '')]"
-                [disabled]="!selectedSizes[product.name]"
-                (click)="addToCart(product, selectedSizes[product.name])">
-                {{ addedToCart[product.name + (selectedSizes[product.name] || '')] ? '✓ Agregado' : 'Agregar al carrito' }}
+                [class.added]="addedToCart[product.id + (selectedSizes[product.id] || '')]"
+                [disabled]="!selectedSizes[product.id]"
+                (click)="addToCart(product, selectedSizes[product.id])">
+                {{ addedToCart[product.id + (selectedSizes[product.id] || '')] ? '✓ Agregado' : 'Agregar al carrito' }}
               </button>
 
             </div>

@@ -26,13 +26,11 @@
           <div class="item-image-wrap">
             <img [src]="item.product.image" [alt]="item.product.name" class="item-image" />
           </div>
-
           <div class="item-details">
             <p class="item-name">{{ item.product.name }}</p>
             <p class="item-meta">Talla: <strong>{{ item.size }}</strong></p>
             <p class="item-price">${{ item.product.price }}</p>
           </div>
-
           <div class="item-controls">
             <div class="qty-control">
               <button class="qty-btn" (click)="changeQty(i, -1)">−</button>
@@ -41,6 +39,43 @@
             </div>
             <p class="item-subtotal">${{ getSubtotal(item) }}</p>
             <button class="btn-remove" (click)="removeItem(i)" title="Eliminar">✕</button>
+          </div>
+        </div>
+      }
+
+      <!-- DIRECCIÓN DE ENVÍO -->
+      @if (isLoggedIn) {
+        <div class="address-section">
+          <h3 class="address-title">Datos de envío</h3>
+          <div class="address-grid">
+            <div class="field-group field-wide">
+              <label>Calle *</label>
+              <input type="text" [(ngModel)]="direccion.calle" placeholder="Av. Siempre Viva" />
+            </div>
+            <div class="field-group">
+              <label>Núm. exterior *</label>
+              <input type="text" [(ngModel)]="direccion.numero_ext" placeholder="742" />
+            </div>
+            <div class="field-group">
+              <label>Núm. interior</label>
+              <input type="text" [(ngModel)]="direccion.numero_int" placeholder="Depto. 3B" />
+            </div>
+            <div class="field-group">
+              <label>Colonia *</label>
+              <input type="text" [(ngModel)]="direccion.colonia" placeholder="Centro" />
+            </div>
+            <div class="field-group">
+              <label>Ciudad *</label>
+              <input type="text" [(ngModel)]="direccion.ciudad" placeholder="Ciudad de México" />
+            </div>
+            <div class="field-group">
+              <label>Estado *</label>
+              <input type="text" [(ngModel)]="direccion.estado" placeholder="CDMX" />
+            </div>
+            <div class="field-group">
+              <label>Código postal *</label>
+              <input type="text" [(ngModel)]="direccion.codigo_postal" placeholder="06600" maxlength="5" />
+            </div>
           </div>
         </div>
       }
@@ -58,14 +93,21 @@
       }
 
       <div class="summary-divider"></div>
-
       <div class="summary-total">
         <span>Total</span>
         <span>${{ total }}</span>
       </div>
 
+      @if (errorMsg) {
+        <p class="error-msg">{{ errorMsg }}</p>
+      }
+
       @if (isLoggedIn) {
-        <button class="btn-checkout" (click)="checkout()">Proceder al pago</button>
+        <button class="btn-checkout"
+          [disabled]="isCheckingOut || !isDireccionValid()"
+          (click)="checkout()">
+          {{ isCheckingOut ? 'Procesando...' : 'Confirmar compra' }}
+        </button>
       } @else {
         <div class="login-required">
           <p>Inicia sesión para completar tu compra.</p>

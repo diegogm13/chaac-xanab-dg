@@ -1,0 +1,102 @@
+<div class="page-header">
+  <p class="header-brand">CHAAC XANAB</p>
+  <h1>MI PERFIL</h1>
+</div>
+
+@if (isLoading) {
+  <div class="loading-state"><p>Cargando...</p></div>
+}
+
+@if (!isLoading && profile) {
+  <div class="perfil-layout">
+
+    <!-- DATOS PERSONALES -->
+    <section class="perfil-card">
+      <h2 class="card-title">Datos personales</h2>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" [(ngModel)]="editName" />
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" [(ngModel)]="editEmail" />
+      </div>
+      <div class="form-group">
+        <label>Rol</label>
+        <input type="text" [value]="profile.role" disabled />
+      </div>
+      <div class="form-group">
+        <label>Miembro desde</label>
+        <input type="text" [value]="profile.created_at | date:'mediumDate'" disabled />
+      </div>
+      @if (profileMsg)   { <p class="msg-success">{{ profileMsg }}</p> }
+      @if (profileError) { <p class="msg-error">{{ profileError }}</p> }
+      <button class="btn-save" [disabled]="savingProfile" (click)="saveProfile()">
+        {{ savingProfile ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </section>
+
+    <!-- CONTRASEÑA -->
+    <section class="perfil-card">
+      <h2 class="card-title">Cambiar contraseña</h2>
+      <div class="form-group">
+        <label>Contraseña actual</label>
+        <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••" />
+      </div>
+      <div class="form-group">
+        <label>Nueva contraseña</label>
+        <input type="password" [(ngModel)]="newPassword" placeholder="••••••••" />
+      </div>
+      <div class="form-group">
+        <label>Confirmar nueva contraseña</label>
+        <input type="password" [(ngModel)]="confirmNewPwd" placeholder="••••••••" />
+      </div>
+      @if (passwordMsg)   { <p class="msg-success">{{ passwordMsg }}</p> }
+      @if (passwordError) { <p class="msg-error">{{ passwordError }}</p> }
+      <button class="btn-save" [disabled]="savingPassword" (click)="savePassword()">
+        {{ savingPassword ? 'Actualizando...' : 'Actualizar contraseña' }}
+      </button>
+    </section>
+
+    <!-- DIRECCIÓN -->
+    <section class="perfil-card full-width">
+      <h2 class="card-title">Dirección de envío</h2>
+      <div class="address-grid">
+        <div class="form-group wide">
+          <label>Calle</label>
+          <input type="text" [(ngModel)]="direccion.calle" placeholder="Av. Siempre Viva" />
+        </div>
+        <div class="form-group">
+          <label>Núm. exterior</label>
+          <input type="text" [(ngModel)]="direccion.numero_ext" placeholder="742" />
+        </div>
+        <div class="form-group">
+          <label>Núm. interior</label>
+          <input type="text" [(ngModel)]="direccion.numero_int" placeholder="Depto. 3B" />
+        </div>
+        <div class="form-group">
+          <label>Colonia</label>
+          <input type="text" [(ngModel)]="direccion.colonia" placeholder="Centro" />
+        </div>
+        <div class="form-group">
+          <label>Ciudad</label>
+          <input type="text" [(ngModel)]="direccion.ciudad" placeholder="Ciudad de México" />
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <input type="text" [(ngModel)]="direccion.estado" placeholder="CDMX" />
+        </div>
+        <div class="form-group">
+          <label>Código postal</label>
+          <input type="text" [(ngModel)]="direccion.codigo_postal" placeholder="06600" maxlength="5" />
+        </div>
+      </div>
+      @if (addressMsg)   { <p class="msg-success">{{ addressMsg }}</p> }
+      @if (addressError) { <p class="msg-error">{{ addressError }}</p> }
+      <button class="btn-save" [disabled]="savingAddress" (click)="saveAddress()">
+        {{ savingAddress ? 'Guardando...' : 'Guardar dirección' }}
+      </button>
+    </section>
+
+  </div>
+}

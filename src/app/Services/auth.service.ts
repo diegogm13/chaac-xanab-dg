@@ -1,85 +1,111 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
-export interface StoredUser {
+export interface JwtUser {
+  sub: string;
+  email: string;
+  role: string;
+  name: string;
+  exp?: number;
+}
+
+export interface UserProfile {
+  id: string;
   name: string;
   email: string;
-  password: string;
+  role: string;
+  created_at: string;
 }
+
+const TOKEN_KEY = 'chaac_token';
+const API       = '/api/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly USERS_KEY = 'chaac_users';
-  private readonly SESSION_KEY = 'chaac_session';
+  private readonly http = inject(HttpClient);
 
-  constructor() {
-    this.seedDemoUser();
+  // ─── Token ───────────────────────────────────────────────────────────────────
+
+  saveToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
   }
 
-  private seedDemoUser(): void {
-    const users = this.getUsers();
-    const demoExists = users.some(u => u.email === 'demo@chaac.mx');
-    if (!demoExists) {
-      users.push({ name: 'Demo', email: 'demo@chaac.mx', password: '1234' });
-      localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-    }
+  getToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
   }
 
-  private getUsers(): StoredUser[] {
-    try {
-      return JSON.parse(localStorage.getItem(this.USERS_KEY) || '[]');
-    } catch {
-      return [];
-    }
+  removeToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
   }
 
-  register(name: string, email: string, password: string): boolean {
-    const users = this.getUsers();
-    if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+  // ─── Estado de sesión ────────────────────────────────────────────────────────
+
+  isLoggedIn(): boolean {
+    const user = this.getCurrentUser();
+    if (!user) return false;
+    // Verificar expiración del JWT localmente
+    if (user.exp && user.exp * 1000 < Date.now()) {
+      this.removeToken();
       return false;
     }
-    users.push({ name, email: email.toLowerCase(), password });
-    localStorage.setItem(this.USERS_KEY, JSON.stringify(users));
-    localStorage.setItem(this.SESSION_KEY, email.toLowerCase());
     return true;
   }
 
-  login(email: string, password: string): boolean {
-    const users = this.getUsers();
-    const user = users.find(
-      u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
-    if (user) {
-      localStorage.setItem(this.SESSION_KEY, user.email);
-      return true;
+  /** Decodifica el payload del JWT sin verificar firma (solo lectura local) */
+  getCurrentUser(): JwtUser | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload)) as JwtUser;
+    } catch {
+      return null;
     }
-    return false;
   }
 
-  /**
-   * Abre sesión después de verificación biométrica exitosa.
-   * Solo debe llamarse tras confirmar la identidad con WebAuthnService.login().
-   */
-  loginBiometric(email: string): boolean {
-    const users = this.getUsers();
-    const user  = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (user) {
-      localStorage.setItem(this.SESSION_KEY, user.email);
-      return true;
-    }
-    return false;
+  isAdmin(): boolean {
+    return this.getCurrentUser()?.role === 'admin';
+  }
+
+  // ─── API calls ───────────────────────────────────────────────────────────────
+
+  register(name: string, email: string, password: string): Observable<{ token: string }> {
+    return this.http
+      .post<{ token: string }>(`${API}/register`, { name, email, password })
+      .pipe(tap(res => this.saveToken(res.token)));
+  }
+
+  login(email: string, password: string): Observable<{ token: string }> {
+    return this.http
+      .post<{ token: string }>(`${API}/login`, { email, password })
+      .pipe(tap(res => this.saveToken(res.token)));
   }
 
   logout(): void {
-    localStorage.removeItem(this.SESSION_KEY);
+    this.removeToken();
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.SESSION_KEY);
+  getMe(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${API}/me`);
   }
 
-  getCurrentUser(): StoredUser | null {
-    const email = localStorage.getItem(this.SESSION_KEY);
-    if (!email) return null;
-    return this.getUsers().find(u => u.email === email) || null;
+  updateMe(data: { name?: string; email?: string }): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${API}/me`, data);
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${API}/me/password`, {
+      currentPassword,
+      newPassword,
+    });
+  }
+
+  getDireccion(): Observable<unknown> {
+    return this.http.get(`${API}/me/direccion`);
+  }
+
+  saveDireccion(direccion: unknown): Observable<unknown> {
+    return this.http.put(`${API}/me/direccion`, direccion);
   }
 }

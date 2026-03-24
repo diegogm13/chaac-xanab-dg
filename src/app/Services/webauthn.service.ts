@@ -2,6 +2,7 @@ import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from './auth.service';
 
 /**
  * WebAuthnService
@@ -21,9 +22,10 @@ import { firstValueFrom } from 'rxjs';
  */
 @Injectable({ providedIn: 'root' })
 export class WebAuthnService {
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly http       = inject(HttpClient);
-  private readonly API        = '/api/webauthn';
+  private readonly platformId  = inject(PLATFORM_ID);
+  private readonly http        = inject(HttpClient);
+  private readonly authService = inject(AuthService);
+  private readonly API         = '/api/webauthn';
 
   /**
    * Detecta si el navegador y el dispositivo soportan autenticación
@@ -132,9 +134,9 @@ export class WebAuthnService {
 
     const assertionResp = assertion.response as AuthenticatorAssertionResponse;
 
-    // ── Paso 4: El servidor verifica la firma criptográfica ────────────────
+    // ── Paso 4: El servidor verifica la firma y devuelve JWT ──────────────
     const result = await firstValueFrom(
-      this.http.post<{ success: boolean }>(`${this.API}/login-verify`, {
+      this.http.post<{ token: string }>(`${this.API}/login-verify`, {
         email,
         credentialId:      this.bufferToBase64url(assertion.rawId),
         clientDataJSON:    this.bufferToBase64url(assertionResp.clientDataJSON),
@@ -143,7 +145,11 @@ export class WebAuthnService {
       })
     );
 
-    return result?.success ?? false;
+    if (result?.token) {
+      this.authService.saveToken(result.token);
+      return true;
+    }
+    return false;
   }
 
   // ─── Utilidades de conversión ArrayBuffer ↔ base64url ────────────────────

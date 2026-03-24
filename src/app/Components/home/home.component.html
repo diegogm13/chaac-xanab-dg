@@ -1,0 +1,205 @@
+@if (isLoading) {
+  <div class="loading-state">
+    <p>Cargando...</p>
+  </div>
+}
+
+@if (!isLoading) {
+
+  <!-- HERO -->
+  @if (!isSearching) {
+    <section class="hero-section">
+      <div class="hero-content">
+        <div>
+          <p class="hero-label">RUNNING</p>
+          <h1 class="hero-title">AIR MAX PULSE</h1>
+          <p class="hero-description">
+            Velocidad suprema. Comodidad increíble. Diseño revolucionario.
+            La nueva era del calzado deportivo ha llegado.
+          </p>
+          <div class="hero-actions">
+            <a routerLink="/carrito" class="btn-primary">Comprar</a>
+            <button class="btn-secondary">Conoce más</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/zapato-hero.png" alt="Air Max Pulse" class="shoe-image-real" />
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- RESULTADOS DE BÚSQUEDA -->
+  @if (isSearching) {
+    <section class="search-results-section">
+      <div class="container">
+        <div class="search-header">
+          <h2 class="search-title">Resultados para "{{ searchTerm }}"</h2>
+          <p class="search-count">{{ searchResults.length }} productos encontrados</p>
+        </div>
+
+        @if (searchResults.length === 0) {
+          <div class="no-results">
+            <div class="no-results-icon">😕</div>
+            <h3>No encontramos "{{ searchTerm }}"</h3>
+            <p>Intenta con otro término o explora nuestras categorías.</p>
+            <button class="btn-primary" (click)="clearSearch()">Ver todos</button>
+          </div>
+        } @else {
+          <div class="products-grid">
+            @for (product of searchResults; track product.id) {
+              <div class="product-card">
+                <div class="product-image-container">
+                  <img [src]="product.image_url" [alt]="product.name" class="product-image" />
+                  @if (product.badge) {
+                    <span class="product-badge" [class]="product.badge">
+                      {{ badgeLabel(product.badge) }}
+                    </span>
+                  }
+                </div>
+                <div class="product-info">
+                  <p class="product-name">{{ product.name }}</p>
+                  <p class="product-description">{{ product.description }}</p>
+                  <div class="size-selector">
+                    <p class="size-label">Talla (MX):</p>
+                    <div class="size-options">
+                      @for (s of product.sizes; track s) {
+                        <button class="size-btn"
+                          [class.selected]="selectedSizes[product.id] === s"
+                          (click)="selectedSizes[product.id] = s">{{ s }}</button>
+                      }
+                    </div>
+                  </div>
+                  <div class="product-footer">
+                    <span class="product-price">${{ product.price }}</span>
+                    <button class="btn-add-cart"
+                      [class.added]="addedToCart[product.id + (selectedSizes[product.id] || '')]"
+                      [disabled]="!selectedSizes[product.id]"
+                      (click)="addToCart(product, selectedSizes[product.id])">
+                      {{ addedToCart[product.id + (selectedSizes[product.id] || '')] ? '✓ Agregado' : 'Agregar' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- CATEGORÍAS -->
+  @if (!isSearching) {
+    <section class="categories-section">
+      <div class="container">
+        <h2 class="section-title">DESTACADOS</h2>
+        <div class="categories-grid">
+          @for (cat of categorias; track cat.id) {
+            <a [routerLink]="'/' + cat.slug" class="category-card">
+              <img [src]="cat.image_url || 'assets/categoria-default.jpg'"
+                   [alt]="cat.name" class="category-image-real" />
+              <h3 class="category-title">{{ cat.name }}</h3>
+              @if (cat.subtitle) {
+                <p class="category-subtitle">{{ cat.subtitle }}</p>
+              }
+              <span class="category-link">Explorar →</span>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS DESTACADOS (badge = new) -->
+    @if (featuredProducts.length > 0) {
+      <section class="products-section">
+        <div class="container">
+          <h2 class="section-title">PRODUCTOS DESTACADOS</h2>
+          <div class="products-grid">
+            @for (product of featuredProducts; track product.id) {
+              <div class="product-card">
+                <div class="product-image-container">
+                  <img [src]="product.image_url" [alt]="product.name" class="product-image" />
+                  @if (product.badge) {
+                    <span class="product-badge" [class]="product.badge">
+                      {{ badgeLabel(product.badge) }}
+                    </span>
+                  }
+                </div>
+                <div class="product-info">
+                  <p class="product-name">{{ product.name }}</p>
+                  <p class="product-description">{{ product.description }}</p>
+                  <div class="size-selector">
+                    <p class="size-label">Talla (MX):</p>
+                    <div class="size-options">
+                      @for (s of product.sizes; track s) {
+                        <button class="size-btn"
+                          [class.selected]="selectedSizes[product.id] === s"
+                          (click)="selectedSizes[product.id] = s">{{ s }}</button>
+                      }
+                    </div>
+                  </div>
+                  <div class="product-footer">
+                    <span class="product-price">${{ product.price }}</span>
+                    <button class="btn-add-cart"
+                      [class.added]="addedToCart[product.id + (selectedSizes[product.id] || '')]"
+                      [disabled]="!selectedSizes[product.id]"
+                      (click)="addToCart(product, selectedSizes[product.id])">
+                      {{ addedToCart[product.id + (selectedSizes[product.id] || '')] ? '✓ Agregado' : 'Agregar' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- MÁS VENDIDOS (badge = popular) -->
+    @if (bestSellers.length > 0) {
+      <section class="products-section bg-gray">
+        <div class="container">
+          <h2 class="section-title">MÁS VENDIDOS</h2>
+          <div class="products-grid">
+            @for (product of bestSellers; track product.id) {
+              <div class="product-card">
+                <div class="product-image-container">
+                  <img [src]="product.image_url" [alt]="product.name" class="product-image" />
+                  @if (product.badge) {
+                    <span class="product-badge" [class]="product.badge">
+                      {{ badgeLabel(product.badge) }}
+                    </span>
+                  }
+                </div>
+                <div class="product-info">
+                  <p class="product-name">{{ product.name }}</p>
+                  <p class="product-description">{{ product.description }}</p>
+                  <div class="size-selector">
+                    <p class="size-label">Talla (MX):</p>
+                    <div class="size-options">
+                      @for (s of product.sizes; track s) {
+                        <button class="size-btn"
+                          [class.selected]="selectedSizes[product.id] === s"
+                          (click)="selectedSizes[product.id] = s">{{ s }}</button>
+                      }
+                    </div>
+                  </div>
+                  <div class="product-footer">
+                    <span class="product-price">${{ product.price }}</span>
+                    <button class="btn-add-cart"
+                      [class.added]="addedToCart[product.id + (selectedSizes[product.id] || '')]"
+                      [disabled]="!selectedSizes[product.id]"
+                      (click)="addToCart(product, selectedSizes[product.id])">
+                      {{ addedToCart[product.id + (selectedSizes[product.id] || '')] ? '✓ Agregado' : 'Agregar' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+  }
+
+}

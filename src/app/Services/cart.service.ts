@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface CartProduct {
+  id?: string;      // UUID del producto en Supabase — requerido para confirmar compra
   name: string;
   price: number;
   image: string;

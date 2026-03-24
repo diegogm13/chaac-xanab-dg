@@ -1,20 +1,54 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './Components/home/home.component';
-import { LoginComponent } from './Components/login/login.component';
-import { RegistroComponent } from './Components/registro/registro.component';
-import { CarritoComponent } from './Components/carrito/carrito.component';
-import { CompraFinalComponent } from './Components/compra-final/compra-final.component';
-import { TerminosUsoComponent } from './Components/terminos-uso/terminos-uso.component';
-import { CategoriaComponent } from './Components/categoria/categoria.component';
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '',          component: HomeComponent,       pathMatch: 'full' },
-  { path: 'login',     component: LoginComponent },
-  { path: 'registro',  component: RegistroComponent },
-  { path: 'carrito',   component: CarritoComponent },
-  { path: 'gracias',   component: CompraFinalComponent },
-  { path: 'terminos',  component: TerminosUsoComponent },
-  // Categorías del nav — fácil de ampliar cuando haya BD
-  { path: ':categoria', component: CategoriaComponent },
-  { path: '**',         redirectTo: '' }
+  {
+    path: '',
+    loadComponent: () => import('./Components/home/home.component').then(m => m.HomeComponent),
+    pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./Components/login/login.component').then(m => m.LoginComponent),
+  },
+  {
+    path: 'registro',
+    loadComponent: () => import('./Components/registro/registro.component').then(m => m.RegistroComponent),
+  },
+  {
+    path: 'carrito',
+    loadComponent: () => import('./Components/carrito/carrito.component').then(m => m.CarritoComponent),
+  },
+  // ── Rutas protegidas — ANTES del catch-all :categoria ──────────────────────
+  {
+    path: 'gracias',
+    loadComponent: () => import('./Components/compra-final/compra-final.component').then(m => m.CompraFinalComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./Components/perfil/perfil.component').then(m => m.PerfilComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'mis-compras',
+    loadComponent: () => import('./Components/mis-compras/mis-compras.component').then(m => m.MisComprasComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'admin',
+    loadComponent: () => import('./Components/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+    canActivate: [adminGuard],
+  },
+  {
+    path: 'terminos',
+    loadComponent: () => import('./Components/terminos-uso/terminos-uso.component').then(m => m.TerminosUsoComponent),
+  },
+  // ── Catch-all de categorías — SIEMPRE al final ─────────────────────────────
+  {
+    path: ':categoria',
+    loadComponent: () => import('./Components/categoria/categoria.component').then(m => m.CategoriaComponent),
+  },
+  { path: '**', redirectTo: '' },
 ];

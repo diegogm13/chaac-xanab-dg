@@ -1,0 +1,352 @@
+<!-- HEADER -->
+<div class="admin-header">
+  <p class="header-brand">CHAAC XANAB</p>
+  <h1>PANEL DE ADMINISTRACIÓN</h1>
+  <div class="admin-header-actions">
+    <a routerLink="/" class="admin-btn-store">← Ver tienda</a>
+    <button class="admin-btn-logout" (click)="logout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn" [class.active]="activeTab === 'categorias'" (click)="setTab('categorias')">
+    Categorías
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'productos'" (click)="setTab('productos')">
+    Productos
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'compras'" (click)="setTab('compras')">
+    Compras
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'usuarios'" (click)="setTab('usuarios')">
+    Usuarios
+  </button>
+</div>
+
+<div class="tab-content">
+
+  <!-- ═══ TAB CATEGORÍAS ═══ -->
+  @if (activeTab === 'categorias') {
+    <div class="tab-pane">
+      <div class="pane-bar">
+        <h2 class="pane-title">Categorías ({{ categorias.length }})</h2>
+        <button class="btn-new" (click)="openCreateCatModal()">+ Nueva categoría</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Slug</th>
+              <th>Nombre</th>
+              <th>Subtítulo</th>
+              <th>Orden</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categorias; track cat.id) {
+              <tr>
+                <td>
+                  @if (cat.image_url) {
+                    <img [src]="cat.image_url" [alt]="cat.name" class="prod-thumb" />
+                  } @else {
+                    <div class="no-img">—</div>
+                  }
+                </td>
+                <td><code>{{ cat.slug }}</code></td>
+                <td>{{ cat.name }}</td>
+                <td>{{ cat.subtitle || '—' }}</td>
+                <td>{{ cat.orden }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit"   (click)="openEditCatModal(cat)">Editar</button>
+                  <button class="btn-delete" (click)="deleteCat(cat)">Eliminar</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- ═══ TAB PRODUCTOS ═══ -->
+  @if (activeTab === 'productos') {
+    <div class="tab-pane">
+      <div class="pane-bar">
+        <h2 class="pane-title">Productos ({{ productos.length }})</h2>
+        <button class="btn-new" (click)="openCreateModal()">+ Nuevo producto</button>
+      </div>
+
+      @if (loadingProds) { <p class="loading-txt">Cargando...</p> }
+
+      @if (!loadingProds) {
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Activo</th>
+                <th>Badge</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of productos; track p.id) {
+                <tr [class.inactive]="!p.activo">
+                  <td><img [src]="p.image_url" [alt]="p.name" class="prod-thumb" /></td>
+                  <td>{{ p.name }}</td>
+                  <td>${{ p.price }}</td>
+                  <td>{{ p.stock }}</td>
+                  <td>
+                    <span class="status-dot" [class.on]="p.activo">
+                      {{ p.activo ? 'Sí' : 'No' }}
+                    </span>
+                  </td>
+                  <td>{{ p.badge || '—' }}</td>
+                  <td class="actions-cell">
+                    <button class="btn-edit"   (click)="openEditModal(p)">Editar</button>
+                    <button class="btn-delete" (click)="deleteProduct(p)">Eliminar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══ TAB COMPRAS ═══ -->
+  @if (activeTab === 'compras') {
+    <div class="tab-pane">
+      <div class="pane-bar">
+        <h2 class="pane-title">Compras ({{ compras.length }})</h2>
+      </div>
+
+      @if (loadingCompras) { <p class="loading-txt">Cargando...</p> }
+
+      @if (!loadingCompras) {
+        <div class="compras-list">
+          @for (c of compras; track c.id) {
+            <div class="compra-card">
+              <div class="compra-row" (click)="toggleCompra(c.id)">
+                <span class="compra-id">#{{ c.id.slice(0, 8).toUpperCase() }}</span>
+                <span class="compra-date">{{ c.created_at | date:'short' }}</span>
+                <span class="compra-total">${{ c.total }}</span>
+                <div class="status-select-wrap">
+                  <select class="status-select"
+                    [value]="c.status"
+                    [disabled]="updatingStatus[c.id]"
+                    (change)="updateStatus(c, $any($event.target).value)"
+                    (click)="$event.stopPropagation()">
+                    @for (opt of statusOptions; track opt) {
+                      <option [value]="opt" [selected]="c.status === opt">{{ statusLabel(opt) }}</option>
+                    }
+                  </select>
+                </div>
+                <span class="toggle-icon">{{ expandedCompra === c.id ? '▲' : '▼' }}</span>
+              </div>
+
+              @if (expandedCompra === c.id) {
+                <div class="compra-items">
+                  @for (item of c.compras_items; track item.id) {
+                    <div class="compra-item">
+                      <img [src]="item.image_url" [alt]="item.name" class="item-thumb" />
+                      <div>
+                        <p class="item-name">{{ item.name }}</p>
+                        <p class="item-meta">Talla: {{ item.size }} · ×{{ item.quantity }} · ${{ item.price }}</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══ TAB USUARIOS ═══ -->
+  @if (activeTab === 'usuarios') {
+    <div class="tab-pane">
+      <div class="pane-bar">
+        <h2 class="pane-title">Usuarios ({{ usuarios.length }})</h2>
+      </div>
+
+      @if (loadingUsers) { <p class="loading-txt">Cargando...</p> }
+
+      @if (!loadingUsers) {
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Registro</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (u of usuarios; track u.id) {
+                <tr>
+                  <td>{{ u.name }}</td>
+                  <td>{{ u.email }}</td>
+                  <td><span class="role-badge" [class.admin]="u.role === 'admin'">{{ u.role }}</span></td>
+                  <td>{{ u.created_at | date:'mediumDate' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- ═══ MODAL CATEGORÍA ═══ -->
+@if (showCatModal) {
+  <div class="modal-overlay" (click)="closeCatModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingCat ? 'Editar categoría' : 'Nueva categoría' }}</h3>
+        <button class="modal-close" (click)="closeCatModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          @if (!editingCat) {
+            <div class="field-group">
+              <label>Slug * (ruta URL)</label>
+              <select [(ngModel)]="catForm.slug">
+                <option value="">Selecciona un slug</option>
+                @for (s of SLUGS_VALIDOS; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+            </div>
+          }
+          <div class="field-group" [class.wide]="!!editingCat">
+            <label>Nombre *</label>
+            <input type="text" [(ngModel)]="catForm.name" placeholder="Running" />
+          </div>
+          <div class="field-group wide">
+            <label>Subtítulo</label>
+            <input type="text" [(ngModel)]="catForm.subtitle" placeholder="Conquista cada kilómetro" />
+          </div>
+          <div class="field-group">
+            <label>Orden</label>
+            <input type="number" [(ngModel)]="catForm.orden" placeholder="1" min="0" />
+          </div>
+          <div class="field-group wide">
+            <label>Imagen {{ editingCat ? '(dejar vacío para mantener actual)' : '' }}</label>
+            <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onCatFileChange($event)" />
+            @if (editingCat?.image_url && !catFile) {
+              <img [src]="editingCat!.image_url" alt="imagen actual" class="current-image" />
+            }
+          </div>
+        </div>
+        @if (catMsg)   { <p class="msg-success">{{ catMsg }}</p> }
+        @if (catError) { <p class="msg-error">{{ catError }}</p> }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeCatModal()">Cancelar</button>
+        <button class="btn-save" [disabled]="savingCat" (click)="saveCat()">
+          {{ savingCat ? 'Guardando...' : (editingCat ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═══ MODAL PRODUCTO ═══ -->
+@if (showProductModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingProduct ? 'Editar producto' : 'Nuevo producto' }}</h3>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="field-group wide">
+            <label>Nombre *</label>
+            <input type="text" [(ngModel)]="productForm.name" placeholder="Air Max Pulse" />
+          </div>
+          <div class="field-group wide">
+            <label>Descripción *</label>
+            <textarea [(ngModel)]="productForm.description" rows="2" placeholder="Descripción breve del producto"></textarea>
+          </div>
+          <div class="field-group">
+            <label>Precio *</label>
+            <input type="number" [(ngModel)]="productForm.price" placeholder="2850" min="0" />
+          </div>
+          <div class="field-group">
+            <label>Precio original</label>
+            <input type="number" [(ngModel)]="productForm.original_price" placeholder="3500" min="0" />
+          </div>
+          <div class="field-group">
+            <label>Stock *</label>
+            <input type="number" [(ngModel)]="productForm.stock" placeholder="50" min="0" />
+          </div>
+          <div class="field-group">
+            <label>Badge</label>
+            <select [(ngModel)]="productForm.badge">
+              <option value="">Sin badge</option>
+              <option value="new">Nuevo</option>
+              <option value="popular">Popular</option>
+              <option value="sale">Oferta</option>
+            </select>
+          </div>
+          <div class="field-group wide">
+            <label>Tallas (separadas por coma) *</label>
+            <input type="text" [(ngModel)]="productForm.sizes" placeholder="25, 26, 27, 28, 29" />
+          </div>
+          <div class="field-group">
+            <label>Categoría</label>
+            <select [(ngModel)]="productForm.categoria_id">
+              <option value="">Sin categoría</option>
+              @for (cat of categorias; track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="field-group">
+            <label>Activo</label>
+            <div class="toggle-wrap">
+              <input type="checkbox" id="activoToggle" [(ngModel)]="productForm.activo" />
+              <label for="activoToggle" class="toggle-label">
+                {{ productForm.activo ? 'Activo' : 'Inactivo' }}
+              </label>
+            </div>
+          </div>
+          <div class="field-group wide">
+            <label>Imagen del producto {{ editingProduct ? '(dejar vacío para mantener actual)' : '*' }}</label>
+            <input type="file" #fileInput accept="image/jpeg,image/png,image/webp"
+              (change)="onFileChange($event)" />
+            @if (editingProduct?.image_url && !selectedFile) {
+              <img [src]="editingProduct!.image_url" alt="imagen actual" class="current-image" />
+            }
+          </div>
+        </div>
+
+        @if (productMsg)   { <p class="msg-success">{{ productMsg }}</p> }
+        @if (productError) { <p class="msg-error">{{ productError }}</p> }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancelar</button>
+        <button class="btn-save" [disabled]="savingProduct" (click)="saveProduct()">
+          {{ savingProduct ? 'Guardando...' : (editingProduct ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,61 @@
+<div class="page-header">
+  <p class="header-brand">CHAAC XANAB</p>
+  <h1>MIS COMPRAS</h1>
+</div>
+
+@if (isLoading) {
+  <div class="loading-state"><p>Cargando...</p></div>
+}
+
+@if (!isLoading && errorMsg) {
+  <div class="empty-state">
+    <p>{{ errorMsg }}</p>
+    <a routerLink="/" class="btn-primary">Ir al inicio</a>
+  </div>
+}
+
+@if (!isLoading && !errorMsg && compras.length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">📦</div>
+    <h2>Aún no tienes compras</h2>
+    <p>Cuando realices tu primera compra, aparecerá aquí.</p>
+    <a routerLink="/" class="btn-primary">Ver productos</a>
+  </div>
+}
+
+@if (!isLoading && compras.length > 0) {
+  <div class="compras-layout">
+    <div class="compras-list">
+      @for (compra of compras; track compra.id) {
+        <div class="compra-card">
+          <div class="compra-header" (click)="toggle(compra.id)">
+            <div class="compra-info">
+              <span class="compra-id">#{{ compra.id.slice(0, 8).toUpperCase() }}</span>
+              <span class="compra-date">{{ compra.created_at | date:'mediumDate' }}</span>
+            </div>
+            <div class="compra-right">
+              <span class="status-badge" [class]="compra.status">{{ statusLabel(compra.status) }}</span>
+              <span class="compra-total">${{ compra.total }}</span>
+              <span class="toggle-icon">{{ expandedId === compra.id ? '▲' : '▼' }}</span>
+            </div>
+          </div>
+
+          @if (expandedId === compra.id) {
+            <div class="compra-items">
+              @for (item of compra.compras_items; track item.id) {
+                <div class="compra-item">
+                  <img [src]="item.image_url" [alt]="item.name" class="item-thumb" />
+                  <div class="item-info">
+                    <p class="item-name">{{ item.name }}</p>
+                    <p class="item-meta">Talla: {{ item.size }} · Cantidad: {{ item.quantity }}</p>
+                  </div>
+                  <span class="item-price">${{ item.price * item.quantity }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
