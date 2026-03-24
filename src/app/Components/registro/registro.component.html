@@ -10,72 +10,148 @@
 <!-- FORM CARD -->
 <div class="page-content">
   <div class="form-card">
-    <form (ngSubmit)="onSubmit()" #regForm="ngForm">
 
-      <div class="field-group">
-        <label class="field-label">Nombre completo</label>
-        <input
-          type="text"
-          class="field-input"
-          placeholder="Tu nombre"
-          [(ngModel)]="name"
-          name="name"
-          autocomplete="name"
-        />
-      </div>
+    <!-- ── Formulario de registro (oculto tras el registro exitoso) ────────── -->
+    @if (!registrationDone) {
+      <form (ngSubmit)="onSubmit()" #regForm="ngForm">
 
-      <div class="field-group">
-        <label class="field-label">Correo electrónico</label>
-        <input
-          type="email"
-          class="field-input"
-          placeholder="tu@correo.com"
-          [(ngModel)]="email"
-          name="email"
-          autocomplete="email"
-        />
-      </div>
+        <div class="field-group">
+          <label class="field-label">Nombre completo</label>
+          <input
+            type="text"
+            class="field-input"
+            placeholder="Tu nombre"
+            [(ngModel)]="name"
+            name="name"
+            autocomplete="name"
+          />
+        </div>
 
-      <div class="field-group">
-        <label class="field-label">Contraseña</label>
-        <input
-          type="password"
-          class="field-input"
-          placeholder="Mínimo 4 caracteres"
-          [(ngModel)]="password"
-          name="password"
-          autocomplete="new-password"
-        />
-      </div>
+        <div class="field-group">
+          <label class="field-label">Correo electrónico</label>
+          <input
+            type="email"
+            class="field-input"
+            placeholder="tu@correo.com"
+            [(ngModel)]="email"
+            name="email"
+            autocomplete="email"
+          />
+        </div>
 
-      <div class="field-group">
-        <label class="field-label">Confirmar contraseña</label>
-        <input
-          type="password"
-          class="field-input"
-          [class.input-error]="confirmPassword && confirmPassword !== password"
-          placeholder="Repite tu contraseña"
-          [(ngModel)]="confirmPassword"
-          name="confirmPassword"
-          autocomplete="new-password"
-        />
-        @if (confirmPassword && confirmPassword !== password) {
-          <p class="field-hint error">Las contraseñas no coinciden</p>
+        <div class="field-group">
+          <label class="field-label">Contraseña</label>
+          <input
+            type="password"
+            class="field-input"
+            placeholder="Mínimo 4 caracteres"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Confirmar contraseña</label>
+          <input
+            type="password"
+            class="field-input"
+            [class.input-error]="confirmPassword && confirmPassword !== password"
+            placeholder="Repite tu contraseña"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            autocomplete="new-password"
+          />
+          @if (confirmPassword && confirmPassword !== password) {
+            <p class="field-hint error">Las contraseñas no coinciden</p>
+          }
+        </div>
+
+        @if (errorMsg) {
+          <div class="error-msg">{{ errorMsg }}</div>
         }
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          @if (!loading) { Crear cuenta } @else { Registrando... }
+        </button>
+
+      </form>
+
+      <div class="form-footer">
+        <p>¿Ya tienes cuenta? <a routerLink="/login" class="link-accent">Inicia sesión</a></p>
       </div>
+    }
 
-      @if (errorMsg) {
-        <div class="error-msg">{{ errorMsg }}</div>
-      }
+    <!-- ── Panel de activación de huella (aparece tras registro exitoso) ───── -->
+    @if (registrationDone) {
+      <div class="biometric-activation">
 
-      <button type="submit" class="btn-submit" [disabled]="loading">
-        @if (!loading) { Crear cuenta } @else { Registrando... }
-      </button>
+        @if (!biometricRegistered) {
+          <!-- Éxito en registro + propuesta de huella -->
+          <div class="activation-success-badge">✓ ¡Cuenta creada!</div>
 
-    </form>
+          <div class="activation-icon-wrap">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+                 class="activation-fingerprint" aria-hidden="true">
+              <path d="M32 4C17.64 4 6 15.64 6 30c0 9.37 5.03 17.55 12.55 21.98"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M32 4c14.36 0 26 11.64 26 26 0 9.37-5.03 17.55-12.55 21.98"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M32 14c-8.84 0-16 7.16-16 16 0 5.8 3.08 10.88 7.7 13.72"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M32 14c8.84 0 16 7.16 16 16 0 5.8-3.08 10.88-7.7 13.72"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="30" r="4" fill="currentColor"/>
+              <path d="M32 34V48" stroke="currentColor" stroke-width="3"
+                    stroke-linecap="round"/>
+            </svg>
+          </div>
 
-    <div class="form-footer">
-      <p>¿Ya tienes cuenta? <a routerLink="/login" class="link-accent">Inicia sesión</a></p>
-    </div>
+          <h2 class="activation-title">Activa tu huella digital</h2>
+          <p class="activation-desc">
+            Usa Windows Hello o Touch ID para iniciar sesión más rápido.<br>
+            Tu huella <strong>nunca llega al servidor</strong> — solo viaja una firma criptográfica.
+          </p>
+
+          @if (biometricErrorMsg) {
+            <div class="error-msg">{{ biometricErrorMsg }}</div>
+          }
+
+          <button
+            type="button"
+            class="btn-submit"
+            [disabled]="biometricLoading"
+            (click)="onRegisterBiometric()"
+          >
+            @if (!biometricLoading) {
+              Activar huella digital
+            } @else {
+              <span class="biometric-spinner"></span>
+              Esperando huella...
+            }
+          </button>
+
+          <button
+            type="button"
+            class="btn-skip"
+            [disabled]="biometricLoading"
+            (click)="skipBiometric()"
+          >
+            Omitir por ahora
+          </button>
+
+        } @else {
+          <!-- Huella registrada con éxito -->
+          <div class="activation-complete">
+            <div class="activation-checkmark">✓</div>
+            <h2>¡Huella activada!</h2>
+            <p>Ya puedes iniciar sesión con tu huella digital.</p>
+            <p class="activation-redirect">Redirigiendo al inicio...</p>
+          </div>
+        }
+
+      </div>
+    }
+
   </div>
 </div>

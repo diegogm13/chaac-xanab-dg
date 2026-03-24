@@ -55,6 +55,20 @@ export class AuthService {
     return false;
   }
 
+  /**
+   * Abre sesión después de verificación biométrica exitosa.
+   * Solo debe llamarse tras confirmar la identidad con WebAuthnService.login().
+   */
+  loginBiometric(email: string): boolean {
+    const users = this.getUsers();
+    const user  = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (user) {
+      localStorage.setItem(this.SESSION_KEY, user.email);
+      return true;
+    }
+    return false;
+  }
+
   logout(): void {
     localStorage.removeItem(this.SESSION_KEY);
   }

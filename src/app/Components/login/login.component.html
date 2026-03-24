@@ -44,11 +44,54 @@
         <span>Demo: demo&#64;chaac.mx / 1234</span>
       </div>
 
-      <button type="submit" class="btn-submit" [disabled]="loading">
+      <button type="submit" class="btn-submit" [disabled]="loading || biometricLoading">
         @if (!loading) { Iniciar sesión } @else { Verificando... }
       </button>
 
     </form>
+
+    <!-- ── Sección de biometría (solo si el dispositivo la soporta) ────────── -->
+    @if (biometricSupported) {
+      <div class="biometric-section">
+        <div class="biometric-divider">
+          <span>o</span>
+        </div>
+
+        <button
+          type="button"
+          class="btn-biometric"
+          [disabled]="biometricLoading || loading"
+          (click)="onBiometricLogin()"
+        >
+          @if (!biometricLoading) {
+            <!-- Ícono de huella (SVG nativo, sin dependencias) -->
+            <svg class="biometric-icon" viewBox="0 0 24 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 1C7.03 1 3 5.03 3 10c0 3.31 1.71 6.22 4.31 7.94"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 1c4.97 0 9 4.03 9 9 0 3.31-1.71 6.22-4.31 7.94"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 5c-2.76 0-5 2.24-5 5 0 2.1.95 3.96 2.44 5.22"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 5c2.76 0 5 2.24 5 5 0 2.1-.95 3.96-2.44 5.22"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="10" r="1.5" fill="currentColor"/>
+              <path d="M12 11.5V17" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round"/>
+            </svg>
+            Iniciar sesión con huella
+          } @else {
+            <span class="biometric-spinner"></span>
+            Leyendo huella...
+          }
+        </button>
+
+        <p class="biometric-hint">
+          Escribe tu correo arriba y toca el botón para usar tu huella digital
+        </p>
+      </div>
+    }
+    <!-- ─────────────────────────────────────────────────────────────────────── -->
 
     <div class="form-footer">
       <p>¿No tienes cuenta? <a routerLink="/registro" class="link-accent">Regístrate aquí</a></p>

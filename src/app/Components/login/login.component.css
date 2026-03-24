@@ -207,6 +207,86 @@
   opacity: 0.6;
 }
 
+/* ===== BIOMETRÍA ===== */
+.biometric-section {
+  margin-top: 4px;
+}
+
+.biometric-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 20px;
+  color: var(--color-gray-400);
+  font-size: 13px;
+}
+
+.biometric-divider::before,
+.biometric-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-gray-300);
+}
+
+.btn-biometric {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border: 2px solid var(--color-black);
+  border-radius: 30px;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-biometric:hover:not(:disabled) {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.btn-biometric:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.biometric-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* Spinner animado para estado de carga */
+.biometric-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.biometric-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-gray-400);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .page-header { padding: 40px 24px; }
