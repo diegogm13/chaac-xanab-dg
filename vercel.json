@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://backend-chaac-xanab-blyt-kc9oguqie.vercel.app/api/:path*"
+      "destination": "https://backend-chaac-xanab.vercel.app/api/:path*"
     },
     {
       "source": "/(.*)",

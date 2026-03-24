@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://backend-chaac-xanab-blyt-kc9oguqie.vercel.app",
+    "target": "https://backend-chaac-xanab.vercel.app",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "info"
