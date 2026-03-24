@@ -2,9 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(curl -s http://localhost:3000/api/categorias)",
-      "Bash(curl -s http://localhost:3000/api/auth/login -X POST -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"test@test.com\"\",\"\"password\"\":\"\"1234\"\"}')",
-      "Bash(curl -s http://localhost:3000/api/productos)",
+      "Bash(curl -s https://backend-chaac-xanab-blyt-kc9oguqie.vercel.app/api/categorias)",
+      "Bash(curl -s https://backend-chaac-xanab-blyt-kc9oguqie.vercel.app/api/auth/login -X POST -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"test@test.com\"\",\"\"password\"\":\"\"1234\"\"}')",
+      "Bash(curl -s https://backend-chaac-xanab-blyt-kc9oguqie.vercel.app/api/productos)",
       "Bash(curl -s -v http://localhost:4200/api/categorias)",
       "Bash(curl -s http://localhost:4200/api/productos)"
     ]
