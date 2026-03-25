@@ -54,11 +54,7 @@ export class RegistroComponent implements OnInit {
     this.authService.register(this.name, this.email, this.password).subscribe({
       next: () => {
         this.loading = false;
-        if (this.biometricSupported) {
-          this.registrationDone = true;
-        } else {
-          this.router.navigate(['/']);
-        }
+        this.registrationDone = true;
       },
       error: (err) => {
         this.loading = false;

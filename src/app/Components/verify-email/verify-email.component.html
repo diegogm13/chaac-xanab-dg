@@ -1,0 +1,28 @@
+<div class="verify-container">
+
+  @if (state === 'loading') {
+    <div class="verify-card">
+      <div class="spinner"></div>
+      <p class="verify-text">Verificando tu correo...</p>
+    </div>
+  }
+
+  @if (state === 'success') {
+    <div class="verify-card">
+      <div class="verify-icon success">&#10003;</div>
+      <h2 class="verify-title">¡Correo verificado!</h2>
+      <p class="verify-text">{{ message }}</p>
+      <a routerLink="/login" class="verify-btn">Iniciar sesión</a>
+    </div>
+  }
+
+  @if (state === 'error') {
+    <div class="verify-card">
+      <div class="verify-icon error">&#10007;</div>
+      <h2 class="verify-title">Enlace inválido</h2>
+      <p class="verify-text">{{ message }}</p>
+      <a routerLink="/login" class="verify-btn">Volver al login</a>
+    </div>
+  }
+
+</div>

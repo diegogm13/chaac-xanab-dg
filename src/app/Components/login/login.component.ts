@@ -17,6 +17,9 @@ export class LoginComponent implements OnInit {
   password = '';
   errorMsg = '';
   loading  = false;
+  emailNotVerified = false;
+  resendLoading    = false;
+  resendMsg        = '';
 
   biometricSupported = false;
   biometricLoading   = false;
@@ -33,6 +36,8 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.errorMsg = '';
+    this.emailNotVerified = false;
+    this.resendMsg = '';
     if (!this.email || !this.password) {
       this.errorMsg = 'Por favor completa todos los campos.';
       return;
@@ -43,9 +48,29 @@ export class LoginComponent implements OnInit {
         this.loading = false;
         this.router.navigate([this.authService.isAdmin() ? '/admin' : '/']);
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.errorMsg = 'Correo o contraseña incorrectos.';
+        if (err?.error?.message === 'EMAIL_NOT_VERIFIED') {
+          this.emailNotVerified = true;
+          this.errorMsg = 'Debes verificar tu correo antes de iniciar sesión.';
+        } else {
+          this.errorMsg = 'Correo o contraseña incorrectos.';
+        }
+      }
+    });
+  }
+
+  resendVerification(): void {
+    this.resendLoading = true;
+    this.resendMsg = '';
+    this.authService.resendVerification(this.email).subscribe({
+      next: (res) => {
+        this.resendLoading = false;
+        this.resendMsg = res.message;
+      },
+      error: () => {
+        this.resendLoading = false;
+        this.resendMsg = 'Error al reenviar. Inténtalo de nuevo.';
       }
     });
   }

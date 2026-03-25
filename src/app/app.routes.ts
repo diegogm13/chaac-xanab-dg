@@ -42,6 +42,10 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
   {
+    path: 'verify-email',
+    loadComponent: () => import('./Components/verify-email/verify-email.component').then(m => m.VerifyEmailComponent),
+  },
+  {
     path: 'terminos',
     loadComponent: () => import('./Components/terminos-uso/terminos-uso.component').then(m => m.TerminosUsoComponent),
   },

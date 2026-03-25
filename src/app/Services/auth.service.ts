@@ -70,10 +70,16 @@ export class AuthService {
 
   // ─── API calls ───────────────────────────────────────────────────────────────
 
-  register(name: string, email: string, password: string): Observable<{ token: string }> {
-    return this.http
-      .post<{ token: string }>(`${API}/register`, { name, email, password })
-      .pipe(tap(res => this.saveToken(res.token)));
+  register(name: string, email: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API}/register`, { name, email, password });
+  }
+
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.get<{ message: string }>(`${API}/verify-email`, { params: { token } });
+  }
+
+  resendVerification(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API}/resend-verification`, { email });
   }
 
   login(email: string, password: string): Observable<{ token: string }> {
