@@ -52,7 +52,7 @@ button {
 
 .header-top-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 8px 48px;
   font-size: 11px;
 }
@@ -179,6 +179,7 @@ button {
 .hero-actions {
   display: flex;
   gap: 16px;
+  justify-content: flex-end;
 }
 
 .btn-primary {
