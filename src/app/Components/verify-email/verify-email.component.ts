@@ -20,7 +20,7 @@ export class VerifyEmailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token');
+    const token = this.route.snapshot.queryParamMap.get('token_hash');
     if (!token) {
       this.state   = 'error';
       this.message = 'Enlace inválido. No se encontró el token de verificación.';

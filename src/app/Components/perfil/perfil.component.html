@@ -98,5 +98,27 @@
       </button>
     </section>
 
+    <!-- HUELLA DIGITAL -->
+    @if (biometricSupported) {
+      <section class="perfil-card full-width">
+        <h2 class="card-title">Huella digital / Windows Hello</h2>
+
+        @if (!biometricRegistered) {
+          <p style="font-size:14px; color:#555; margin-bottom:20px; line-height:1.6;">
+            Activa tu huella o Windows Hello para iniciar sesión más rápido.<br>
+            Tu biometría <strong>nunca sale del dispositivo</strong> — solo viaja una firma criptográfica.
+          </p>
+          @if (biometricMsg)   { <p class="msg-success">{{ biometricMsg }}</p> }
+          @if (biometricError) { <p class="msg-error">{{ biometricError }}</p> }
+          <button class="btn-save" [disabled]="biometricLoading" (click)="registerBiometric()">
+            {{ biometricLoading ? 'Esperando huella...' : 'Activar huella digital' }}
+          </button>
+        } @else {
+          <p class="msg-success">Huella registrada correctamente. Ya puedes usarla en el login.</p>
+        }
+
+      </section>
+    }
+
   </div>
 }

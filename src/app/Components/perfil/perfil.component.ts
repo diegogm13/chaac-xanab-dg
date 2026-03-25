@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService, UserProfile } from '../../Services/auth.service';
+import { WebAuthnService } from '../../Services/webauthn.service';
 import { DireccionUsuario } from '../../models/product.model';
 
 @Component({
@@ -39,9 +40,19 @@ export class PerfilComponent implements OnInit {
   addressError = '';
   savingAddress = false;
 
-  constructor(private authService: AuthService) {}
+  // Huella digital
+  biometricSupported  = false;
+  biometricLoading    = false;
+  biometricRegistered = false;
+  biometricMsg        = '';
+  biometricError      = '';
 
-  ngOnInit(): void {
+  constructor(
+    private authService: AuthService,
+    private webAuthn: WebAuthnService,
+  ) {}
+
+  async ngOnInit(): Promise<void> {
     this.authService.getMe().subscribe({
       next: (profile) => {
         this.profile   = profile;
@@ -56,6 +67,8 @@ export class PerfilComponent implements OnInit {
       next: (dir: any) => { if (dir) this.direccion = dir; },
       error: () => {}
     });
+
+    this.biometricSupported = await this.webAuthn.isSupported();
   }
 
   saveProfile(): void {
@@ -117,5 +130,25 @@ export class PerfilComponent implements OnInit {
         this.savingAddress = false;
       }
     });
+  }
+
+  async registerBiometric(): Promise<void> {
+    if (!this.profile) return;
+    this.biometricMsg   = '';
+    this.biometricError = '';
+    this.biometricLoading = true;
+    try {
+      await this.webAuthn.register(this.profile.email, this.profile.name);
+      this.biometricRegistered = true;
+      this.biometricMsg = 'Huella registrada. Ya puedes iniciar sesión con ella.';
+    } catch (err: any) {
+      if (err?.name === 'NotAllowedError') {
+        this.biometricError = 'Registro cancelado.';
+      } else {
+        this.biometricError = 'No se pudo registrar la huella. Inténtalo de nuevo.';
+      }
+    } finally {
+      this.biometricLoading = false;
+    }
   }
 }

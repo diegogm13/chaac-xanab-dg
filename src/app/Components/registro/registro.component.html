@@ -82,74 +82,19 @@
       </div>
     }
 
-    <!-- ── Panel de activación de huella (aparece tras registro exitoso) ───── -->
+    <!-- ── Mensaje de verificación de correo ──────────────────────────────── -->
     @if (registrationDone) {
       <div class="biometric-activation">
-
-        @if (!biometricRegistered) {
-          <!-- Éxito en registro + propuesta de huella -->
-          <div class="activation-success-badge">✓ ¡Cuenta creada!</div>
-
-          <div class="activation-icon-wrap">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
-                 class="activation-fingerprint" aria-hidden="true">
-              <path d="M32 4C17.64 4 6 15.64 6 30c0 9.37 5.03 17.55 12.55 21.98"
-                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              <path d="M32 4c14.36 0 26 11.64 26 26 0 9.37-5.03 17.55-12.55 21.98"
-                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              <path d="M32 14c-8.84 0-16 7.16-16 16 0 5.8 3.08 10.88 7.7 13.72"
-                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              <path d="M32 14c8.84 0 16 7.16 16 16 0 5.8-3.08 10.88-7.7 13.72"
-                    stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="32" cy="30" r="4" fill="currentColor"/>
-              <path d="M32 34V48" stroke="currentColor" stroke-width="3"
-                    stroke-linecap="round"/>
-            </svg>
-          </div>
-
-          <h2 class="activation-title">Activa tu huella digital</h2>
-          <p class="activation-desc">
-            Usa Windows Hello o Touch ID para iniciar sesión más rápido.<br>
-            Tu huella <strong>nunca llega al servidor</strong> — solo viaja una firma criptográfica.
-          </p>
-
-          @if (biometricErrorMsg) {
-            <div class="error-msg">{{ biometricErrorMsg }}</div>
-          }
-
-          <button
-            type="button"
-            class="btn-submit"
-            [disabled]="biometricLoading"
-            (click)="onRegisterBiometric()"
-          >
-            @if (!biometricLoading) {
-              Activar huella digital
-            } @else {
-              <span class="biometric-spinner"></span>
-              Esperando huella...
-            }
-          </button>
-
-          <button
-            type="button"
-            class="btn-skip"
-            [disabled]="biometricLoading"
-            (click)="skipBiometric()"
-          >
-            Omitir por ahora
-          </button>
-
-        } @else {
-          <!-- Huella registrada con éxito -->
-          <div class="activation-complete">
-            <div class="activation-checkmark">✓</div>
-            <h2>¡Huella activada!</h2>
-            <p>Ya puedes iniciar sesión con tu huella digital.</p>
-            <p class="activation-redirect">Redirigiendo al inicio...</p>
-          </div>
-        }
-
+        <div class="activation-success-badge">✓ ¡Cuenta creada!</div>
+        <div class="activation-icon-wrap" style="font-size:48px; margin: 16px auto;">✉️</div>
+        <h2 class="activation-title">Verifica tu correo</h2>
+        <p class="activation-desc">
+          Te enviamos un enlace de verificación a <strong>{{ email }}</strong>.<br>
+          Revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.
+        </p>
+        <a routerLink="/login" class="btn-submit" style="display:inline-block; text-decoration:none; text-align:center;">
+          Ir al inicio de sesión
+        </a>
       </div>
     }
 
