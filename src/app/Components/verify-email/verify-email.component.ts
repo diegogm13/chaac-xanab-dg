@@ -20,22 +20,34 @@ export class VerifyEmailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token_hash');
-    if (!token) {
+    const tokenHash  = this.route.snapshot.queryParamMap.get('token_hash');
+    const accessToken = this.route.snapshot.queryParamMap.get('access_token');
+
+    if (accessToken) {
+      this.authService.verifyEmailByToken(accessToken).subscribe({
+        next: (res) => {
+          this.state   = 'success';
+          this.message = res.message;
+        },
+        error: (err) => {
+          this.state   = 'error';
+          this.message = err?.error?.message ?? 'No se pudo verificar el correo.';
+        }
+      });
+    } else if (tokenHash) {
+      this.authService.verifyEmail(tokenHash).subscribe({
+        next: (res) => {
+          this.state   = 'success';
+          this.message = res.message;
+        },
+        error: (err) => {
+          this.state   = 'error';
+          this.message = err?.error?.message ?? 'No se pudo verificar el correo.';
+        }
+      });
+    } else {
       this.state   = 'error';
       this.message = 'Enlace inválido. No se encontró el token de verificación.';
-      return;
     }
-
-    this.authService.verifyEmail(token).subscribe({
-      next: (res) => {
-        this.state   = 'success';
-        this.message = res.message;
-      },
-      error: (err) => {
-        this.state   = 'error';
-        this.message = err?.error?.message ?? 'No se pudo verificar el correo.';
-      }
-    });
   }
 }

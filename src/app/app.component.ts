@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isAdminRoute = false;
 
   private subs = new Subscription();
+  private platformId = inject(PLATFORM_ID);
 
   constructor(
     private router: Router,
@@ -41,6 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAdminRoute = this.router.url.startsWith('/admin');
     this.refreshAuth();
+    this.handleSupabaseHashRedirect();
     this.subs.add(
       this.cartService.cart$
         .pipe(map(() => this.cartService.getCount()))
@@ -49,6 +51,22 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void { this.subs.unsubscribe(); }
+
+  private handleSupabaseHashRedirect(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const hash = window.location.hash;
+    if (!hash || !hash.includes('access_token')) return;
+
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    const type = params.get('type');
+
+    if (accessToken && type === 'signup') {
+      // Clear the hash from the URL without triggering navigation
+      history.replaceState(null, '', window.location.pathname);
+      this.router.navigate(['/verify-email'], { queryParams: { access_token: accessToken } });
+    }
+  }
 
   private refreshAuth(): void {
     this.isLoggedIn = this.authService.isLoggedIn();

@@ -78,6 +78,10 @@ export class AuthService {
     return this.http.get<{ message: string }>(`${API}/verify-email`, { params: { token } });
   }
 
+  verifyEmailByToken(accessToken: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API}/verify-email-token`, { accessToken });
+  }
+
   resendVerification(email: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${API}/resend-verification`, { email });
   }
