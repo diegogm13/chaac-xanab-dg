@@ -22,10 +22,6 @@
         <input type="email" [(ngModel)]="editEmail" />
       </div>
       <div class="form-group">
-        <label>Rol</label>
-        <input type="text" [value]="profile.role" disabled />
-      </div>
-      <div class="form-group">
         <label>Miembro desde</label>
         <input type="text" [value]="profile.created_at | date:'mediumDate'" disabled />
       </div>
