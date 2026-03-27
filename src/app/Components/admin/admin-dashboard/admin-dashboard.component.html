@@ -178,6 +178,7 @@
     <div class="tab-pane">
       <div class="pane-bar">
         <h2 class="pane-title">Usuarios ({{ usuarios.length }})</h2>
+        <button class="btn-new" (click)="openCreateUserModal()">+ Nuevo usuario</button>
       </div>
 
       @if (loadingUsers) { <p class="loading-txt">Cargando...</p> }
@@ -191,6 +192,7 @@
                 <th>Correo</th>
                 <th>Rol</th>
                 <th>Registro</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -200,6 +202,10 @@
                   <td>{{ u.email }}</td>
                   <td><span class="role-badge" [class.admin]="u.role === 'admin'">{{ u.role }}</span></td>
                   <td>{{ u.created_at | date:'mediumDate' }}</td>
+                  <td class="actions-cell">
+                    <button class="btn-edit"   (click)="openEditUserModal(u)">Editar</button>
+                    <button class="btn-delete" (click)="deleteUsuario(u)">Eliminar</button>
+                  </td>
                 </tr>
               }
             </tbody>
@@ -210,6 +216,51 @@
   }
 
 </div>
+
+<!-- ═══ MODAL USUARIO ═══ -->
+@if (showUserModal) {
+  <div class="modal-overlay" (click)="closeUserModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h3>
+        <button class="modal-close" (click)="closeUserModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-grid">
+          <div class="field-group wide">
+            <label>Nombre *</label>
+            <input type="text" [(ngModel)]="userForm.name" placeholder="Juan Pérez" />
+          </div>
+          <div class="field-group wide">
+            <label>Correo *</label>
+            <input type="email" [(ngModel)]="userForm.email" placeholder="juan@correo.com" />
+          </div>
+          @if (!editingUser) {
+            <div class="field-group wide">
+              <label>Contraseña *</label>
+              <input type="password" [(ngModel)]="userForm.password" placeholder="Mínimo 6 caracteres" />
+            </div>
+          }
+          <div class="field-group">
+            <label>Rol</label>
+            <select [(ngModel)]="userForm.role">
+              <option value="customer">customer</option>
+              <option value="admin">admin</option>
+            </select>
+          </div>
+        </div>
+        @if (userMsg)   { <p class="msg-success">{{ userMsg }}</p> }
+        @if (userError) { <p class="msg-error">{{ userError }}</p> }
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeUserModal()">Cancelar</button>
+        <button class="btn-save" [disabled]="savingUser" (click)="saveUser()">
+          {{ savingUser ? 'Guardando...' : (editingUser ? 'Actualizar' : 'Crear') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 <!-- ═══ MODAL CATEGORÍA ═══ -->
 @if (showCatModal) {

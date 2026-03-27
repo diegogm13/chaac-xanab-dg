@@ -51,6 +51,18 @@ export class AdminService {
     return this.http.get<AdminUser[]>(`${this.BASE}/usuarios`);
   }
 
+  createUsuario(data: { name: string; email: string; password: string; role: string }): Observable<AdminUser> {
+    return this.http.post<AdminUser>(`${this.BASE}/usuarios`, data);
+  }
+
+  updateUsuario(id: string, data: { name?: string; email?: string; role?: string }): Observable<AdminUser> {
+    return this.http.put<AdminUser>(`${this.BASE}/usuarios/${id}`, data);
+  }
+
+  deleteUsuario(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.BASE}/usuarios/${id}`);
+  }
+
   // ─── Categorías ──────────────────────────────────────────────────────────────
   getCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>('/api/categorias');

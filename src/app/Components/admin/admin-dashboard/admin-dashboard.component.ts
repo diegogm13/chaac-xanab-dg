@@ -66,8 +66,14 @@ export class AdminDashboardComponent implements OnInit {
   updatingStatus: Record<string, boolean> = {};
 
   // ── Usuarios ───────────────────────────────────────────────────────────────
-  usuarios:     AdminUser[] = [];
-  loadingUsers  = true;
+  usuarios:       AdminUser[] = [];
+  loadingUsers    = true;
+  showUserModal   = false;
+  editingUser:    AdminUser | null = null;
+  userForm        = this.emptyUserForm();
+  savingUser      = false;
+  userMsg         = '';
+  userError       = '';
 
   constructor(
     private adminService: AdminService,
@@ -282,6 +288,75 @@ export class AdminDashboardComponent implements OnInit {
       next: (data) => { this.usuarios = data; this.loadingUsers = false; },
       error: ()     => { this.loadingUsers = false; }
     });
+  }
+
+  openCreateUserModal(): void {
+    this.editingUser = null;
+    this.userForm    = this.emptyUserForm();
+    this.userMsg     = '';
+    this.userError   = '';
+    this.showUserModal = true;
+  }
+
+  openEditUserModal(u: AdminUser): void {
+    this.editingUser = u;
+    this.userForm    = { name: u.name, email: u.email, password: '', role: u.role };
+    this.userMsg     = '';
+    this.userError   = '';
+    this.showUserModal = true;
+  }
+
+  closeUserModal(): void { this.showUserModal = false; }
+
+  saveUser(): void {
+    this.userMsg   = '';
+    this.userError = '';
+    this.savingUser = true;
+
+    if (this.editingUser) {
+      const payload: { name?: string; email?: string; role?: string } = {
+        name:  this.userForm.name,
+        email: this.userForm.email,
+        role:  this.userForm.role,
+      };
+      this.adminService.updateUsuario(this.editingUser.id, payload).subscribe({
+        next: (updated) => {
+          Object.assign(this.editingUser!, updated);
+          this.userMsg    = 'Usuario actualizado.';
+          this.savingUser = false;
+          setTimeout(() => { this.showUserModal = false; }, 1200);
+        },
+        error: (err) => {
+          this.userError  = err?.error?.message ?? 'Error al actualizar usuario.';
+          this.savingUser = false;
+        }
+      });
+    } else {
+      this.adminService.createUsuario(this.userForm).subscribe({
+        next: (created) => {
+          this.usuarios.unshift(created);
+          this.userMsg    = 'Usuario creado.';
+          this.savingUser = false;
+          setTimeout(() => { this.showUserModal = false; }, 1200);
+        },
+        error: (err) => {
+          this.userError  = err?.error?.message ?? 'Error al crear usuario.';
+          this.savingUser = false;
+        }
+      });
+    }
+  }
+
+  deleteUsuario(usuario: AdminUser): void {
+    if (!confirm(`¿Eliminar al usuario "${usuario.name}" (${usuario.email})?`)) return;
+    this.adminService.deleteUsuario(usuario.id).subscribe({
+      next: () => { this.usuarios = this.usuarios.filter(u => u.id !== usuario.id); },
+      error: () => alert('Error al eliminar usuario.')
+    });
+  }
+
+  private emptyUserForm() {
+    return { name: '', email: '', password: '', role: 'customer' };
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
